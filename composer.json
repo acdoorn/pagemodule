@@ -1,0 +1,27 @@
+{
+    "name": "acdoorn/pagemodule",
+    "description": "",
+    "authors": [
+        {
+            "name": "Alexander van Doorn",
+            "email": "turboblaster@live.nl"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.2.*",
+        "illuminate/html": "4.2.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations",
+            "src/controllers",
+            "src/models",
+            "public/css"
+        ],
+        "psr-0": {
+            "Acdoorn\\Pagemodule\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
