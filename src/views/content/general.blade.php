@@ -25,13 +25,15 @@
 		?>
 
 			<h3>About the page</h3>
-			{{ Form::label('name', 'Pagename') }}
-			{{ Form::text('name', Input::old('name'), ['placeholder' => 'Pagename']) }}
-			<br/><br/>
+			<div class="input-group">
+			    <span class="input-group-addon">Pagename</span>
+			{{ Form::text('name', Input::old('name'), ['placeholder' => 'Pagename', 'class'=>'form-control']) }}
+			</div><br/>
 
-			{{ Form::label('enabled', 'Enabled') }}
+			<div class="input-group">
+			    <span class="input-group-addon">Enabled</span>
 			{{ Form::checkbox('enabled', Input::old('enabled')) }}
-			<br/><br/>
+			</div/><br/>
 
 			{{ Form::label('template_id', 'Template') }}
 			{{ Form::select('template_id', $templatearray, Input::old('templated_id')) }}
@@ -63,9 +65,10 @@
 			@elseif(isset($draft))
 
 			<h3>Seoinfo</h3>
-			{{ Form::label('drafturl[draftseoinfo][browsertitle]', 'Title') }}
-			{{ Form::text('drafturl[draftseoinfo][browsertitle]', Input::old('drafturl[draftseoinfo][browsertitle]'), ['placeholder' => 'Browsertitle']) }}
-			<br/><br/>
+			<div class="input-group">
+			    <span class="input-group-addon">Browsertitle</span>
+				{{ Form::text('drafturl[draftseoinfo][browsertitle]', Input::old('drafturl[draftseoinfo][browsertitle]'), ['placeholder' => 'Browsertitle', 'class'=>'form-control']) }}
+			</div></br>
 
 			{{ Form::label('drafturl[draftseoinfo][keywords]', 'Keywords') }}
 			{{ Form::text('drafturl[draftseoinfo][keywords]', Input::old('drafturl[draftseoinfo][keywords]'), ['placeholder' => 'Keywords']) }}

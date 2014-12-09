@@ -10,6 +10,7 @@ class HomeController extends BaseController {
     {
         $draftpages = Draftpage::all();
         $existingpages = Page::all();
+        $this->layout->menu = View::make('pagemodule::partials.menu');
         $this->layout->content = View::make('pagemodule::content.start')->with('draftpages', $draftpages)->with('pages', $existingpages);
     }
 

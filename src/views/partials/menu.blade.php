@@ -10,6 +10,7 @@
 	  </button>
 	  <a class="navbar-brand" href="#">Pagemodule</a>
 	</div>
+	@if(isset($draft) || isset($page))
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 	<ul class="nav navbar-nav">
     	<li <?=echoActiveClassIfRequestMatches("general");?>><?php echo '<a href="CMS/pagemodule/'.(isset($draft) ? 'draft' : 'page').'/'.(isset($draft) ? $draft->id : $page->id).'/general">General</a>';?></li>
@@ -17,8 +18,9 @@
     	<li <?=echoActiveClassIfRequestMatches("menu");?>><?php echo '<a href="CMS/pagemodule/'.(isset($draft) ? 'draft' : 'page').'/'.(isset($draft) ? $draft->id : $page->id).'/menu">Menu</a>';?></li>
     	<li <?=echoActiveClassIfRequestMatches("summary");?>><?php echo '<a href="CMS/pagemodule/'.(isset($draft) ? 'draft' : 'page').'/'.(isset($draft) ? $draft->id : $page->id).'/summary">Summary</a>';?></li>
 	</ul>
+  	</div>
+  	@endif
   </div>
-</div>
 </nav>
 
 <?php 
