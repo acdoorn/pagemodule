@@ -1,49 +1,80 @@
 @section('content')
-<div class="col-md-6" role="main">
+<div class="col-md-12" role="main">
     <div class="bs-docs-section">
 		<h1>Content</h1>
-		<?php 
-		$availablecontent = array();
-	 	foreach($content as $singlecontent) {
-	 		
-	 		if(true)
-				$availablecontent[$singlecontent->id] = $singlecontent->name;
-		}
-		?>
 		@if(isset($page))
-		    {{ Form::model($page) }}
+    	 	<?php
+				$item = $page;
+		    	if(isset($item->template)){
+		    	 	$template = $item->template;
+		    	} 
+	    	 ?>
 		@elseif(isset($draft))
-		    {{ Form::model($draft) }}
-	    	<?php 
-	    	 if(!isset($draft->drafttemplate)){ var_dump($draft->$drafttemplate);} 
-	    	 if(isset($draft->drafttemplate)){} 
-	    	 	?>
+			<?php 
+				$item = $draft;
+		    	if(isset($item->drafttemplate)){
+		    	 	$template = $item->drafttemplate;
+		    	} 
+	    	?>
 		@else
-			{{Form::open()/* error? */}}
+			{{ Redirect::to('/')}}
 		@endif
 
+		    {{ Form::model($item, ['files'     => true]) }}
+	    	<?php 
+	    	 if(!isset($item->drafttemplate)){}; 
+	    	 if(isset($item->drafttemplate)){
+	    	 	$template = $item->drafttemplate;
+	    	 } 
+?>		  		
 		<script type="text/javascript">
 			$(function() {
 				$( "#sectiontabs" ).tabs();
 			});
 		</script>
 		 <div class="contentwrapper">
-		  <div class="contentselect">
-		  	{{ Form::select('content[]', $availablecontent, 0, array('id' => 'choose','multiple'))}}
-			</select>
+		  <div class="contentselect" style="float:left; min-width:20%; max-width:20%;">
+		  	<select class="form-control" name="content[]" id="choose" style="width:100%;" size="5">
+		  		@foreach($modules as $module)
+			  		<?php $fields = $module->draftfields;
+			  			  $value = '';?>
+			  		@foreach($fields as $field) 
+				  		<?php $contenttype = $field->draftcontenttype;?>
+			  			@if($contenttype->name == 'text')
+							<?php $value.= '<div class="input-group">
+							    <span class="input-group-addon">'.ucwords($field->name).'</span>'
+								. Form::text($field->name . '[]', Input::old($field->name), ['placeholder' => ucwords($field->name), 'class'=>'form-control']) .'</div><br/>'?>
+			  			@elseif($contenttype->name == 'textarea')
+							<?php $value.= '<div class="input-group">
+							    <span class="input-group-addon">'.ucwords($field->name).'</span>'
+								. Form::textarea($field->name . '[]', Input::old($field->name), ['placeholder' => ucwords($field->name), 'class'=>'form-control']) .'</div><br/>'?>
+			  			@elseif($type->name == 'image') 
+							<?php $value.= '<div class="input-group">
+							    <span class="input-group-addon">'.ucwords($field->name).'</span>'
+								. Form::file($contenttype->name . '[]', ['class'=>'form-control']) .'</div><br/>'
+								?>
+				  		@endif
+				  		@if($field == end($fields))
+				  			<?php $value.=  Form::hidden($contenttype->name . '[]', ['class'=>'form-control']);?>
+				  		@endif
+			  		@endforeach
+
+			  		<option value="{{{$value}}}">{{$module->name}}</option>
+		  		@endforeach
+		  	</select>
 		  </div>
-		  <div id="sectiontabs">
+		  <div id="sectiontabs" style="float:left; min-width:80%; max-width:80%;">
 			<ul>
-				<?php $template = 2?>
-			@for($x = 1;$template >= $x; $x++)
-				<li><a href="{{Request::url()}}#sectiontabs-{{$x}}">Section {{$x}}</a></li>
+			@for($x = 1;$template->amountofsections >= $x; $x++)
+				<li><a onclick="refreshchoose()" href="{{Request::url()}}#sectiontabs-{{$x}}">Section {{$x}}</a></li>
 			@endfor
 			</ul>
-			@for($x = 1;$template >= $x; $x++)
-				<div id="sectiontabs-{{$x}}"><div class="update" id="update{{$x}}">{{$x}}</div></div>
+			@for($x = 1;$template->amountofsections >= $x; $x++)
+				<div id="sectiontabs-{{$x}}"><div class="update" id="update{{$x}}">Section {{$x}} is still empty</div></div>
 			@endfor
-			{{Form::close()}}
 		 </div>
+			{{Form::submit('Save', ['class'=>'form-control btn-success'])}}
+			{{Form::close()}}
 		</div>
     </div>
 </div>
@@ -52,7 +83,16 @@
         @yield('example')
     </div>
 </div>
-
+	<script>
+	$('#choose').change(function(event) {
+	var alltabs = $(".update");
+	for ( var x = 0; x < alltabs.length; x++ )
+	{
+		if($(alltabs[x]).is(":visible")) {
+			$(alltabs[x]).html($('#choose').val());
+		}
+	}
+}); </script>
   {{ HTML::script('packages/acdoorn/pagemodule/js/content.js') }}
   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
 @stop

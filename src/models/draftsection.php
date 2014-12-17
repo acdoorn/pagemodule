@@ -7,10 +7,10 @@ class Draftsection extends Eloquent {
     protected $table = 'section_draft';
 
     public function drafttemplates() {
-    	return $this->hasMany('Acdoorn\Pagemodule\Drafttemplate');
+    	return $this->belongsToMany('Acdoorn\Pagemodule\Drafttemplate', 'template_has_section_draft');
     }
 
-    public function draftcontent() {
-    	return $this->hasMany('Acdoorn\Pagemodule\Draftcontent');
+    public function draftsectiontype() {
+    	return $this->hasOne('Acdoorn\Pagemodule\Draftsectiontype');
     }
 }

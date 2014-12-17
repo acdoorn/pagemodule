@@ -59,8 +59,18 @@ class FormController extends BaseController {
 			break;
 			case 'content':
 				$draftpage = Draftpage::find($draft_id);
-				$drafttemplate = $draftpage->drafttemplate;
-				var_dump($drafttemplate);
+				$template = $draftpage->drafttemplate;
+				var_dump(Input::get('section.0'));
+
+				
+				$value1 = Input::get('title.0');
+				/* foreach section
+					check contentform()
+						foreach field
+							input get(field);
+				*/
+				// echo Input::get('title.1');
+				// echo Input::get('title.2');
 			break;
 			case 'menu':
 

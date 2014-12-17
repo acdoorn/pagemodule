@@ -1,4 +1,12 @@
 <?php
+App::error(function(Illuminate\Database\Eloquent\ModelNotFoundException $e)
+{
+    return Response::make('Model Not Found', 404);
+});
+App::error(function(Illuminate\Database\QueryException $e)
+{
+    return Response::make('Not Found, ' . $e->errorInfo['2'], 404);
+});
 
 Route::get('/', function() {
 	return Redirect::to('/CMS/pagemodule');
@@ -21,4 +29,3 @@ Route::group(array('prefix' => '/CMS/pagemodule/draft/{draftpageid}'), function(
 	Route::get('/summary', 'Acdoorn\Pagemodule\HomeController@showSummary');
 	Route::post('/{step}', 'Acdoorn\Pagemodule\FormController@updateDraft');
 });
-
