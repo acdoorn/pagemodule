@@ -7,7 +7,11 @@ class Draftfield extends Eloquent {
     protected $table = 'field_draft';
 
 
-    public function draftinput()) {
-    	return $this->hasOne('Acdoorn\Pagemodule\Draftinput');
+    public function draftmodule() {
+    	return $this->belongsTo('Acdoorn\Pagemodule\Draftmodule', 'module_draft_id');
+    }    
+    
+    public function draftcontenttype() {
+    	return $this->belongsTo('Acdoorn\Pagemodule\Draftcontenttype', 'contenttype_draft_id');
     }
 }

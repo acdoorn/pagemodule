@@ -9,28 +9,30 @@ class HomeController extends BaseController {
     public function showStart() 
     {
         $draftpages = Draftpage::all();
-        $existingpages = Page::all();
+        $existingpages = array();
         $this->layout->menu = View::make('pagemodule::partials.menu');
         $this->layout->content = View::make('pagemodule::content.start')->with('draftpages', $draftpages)->with('pages', $existingpages);
     }
 
     public function showGeneral($draftpageid) 
-    {
+    {    
         $type = Request::segment(3);
-        $templates = Drafttemplate::all();
         if($type == 'draft') {
-            $draft = Draftpage::find($draftpageid);
+            $draft = Draftpage::findOrFail($draftpageid);
+            $templates = Drafttemplate::all();
             $url = $draft->drafturl;
             $seoinfo = $draft->drafturl->draftseoinfo;
-            $this->layout->content = View::make('pagemodule::content.general')->with('templates', $templates)->with('draft', $draft);
             $this->layout->menu = View::make('pagemodule::partials.menu')->with('draft', $draft);
+            $this->layout->content = View::make('pagemodule::content.general')->with('templates', $templates)->with('draft', $draft);
             $this->layout->content->example = View::make('pagemodule::examples.google')->with('draft', $draft)->with('url', $url)->with('seoinfo', $seoinfo);
         }
         if($type == 'page') {
-            $page = Page::find($draftpageid);
-            $template = $page->template;
-            $this->layout->content = View::make('pagemodule::content.general')->with('templates', $templates)->with('page', $page);
+            $page = Page::findOrFail($draftpageid);
+            $templates = Template::all();
+            $url = $page->url;
+            $seoinfo = $page->url->seoinfo;
             $this->layout->menu = View::make('pagemodule::partials.menu')->with('page', $page);
+            $this->layout->content = View::make('pagemodule::content.general')->with('templates', $templates)->with('page', $page);
             $this->layout->content->example = View::make('pagemodule::examples.google')->with('page', $page)->with('url', $url)->with('seoinfo', $seoinfo);
         }
     }
@@ -39,19 +41,20 @@ class HomeController extends BaseController {
     {
         $type = Request::segment(3);
         //template ophalen aan de hand van draftpage, template wordt in general aan draftpage gekoppeld.
-        $content = Draftcontent::all();
         if($type == 'draft') {
-            $draft = Draftpage::find($draftpageid);
+            $draft = Draftpage::findOrFail($draftpageid);
             $template = $draft->drafttemplate;
-            $this->layout->content = View::make('pagemodule::content.content')->with('draft', $draft)->with('template', $template)->with('content', $content);
+            $modules = Draftmodule::all();
+            $this->layout->content = View::make('pagemodule::content.content')->with('draft', $draft)->with('template', $template)->with('modules', $modules);
             $this->layout->menu = View::make('pagemodule::partials.menu')->with('draft', $draft);
-            $this->layout->content->example = View::make('pagemodule::examples.example')->with('draft', $draft)->with('template', $template);
+            // $this->layout->content->example = View::make('pagemodule::examples.example')->with('draft', $draft)->with('template', $template);
         }
         if($type == 'page') {
-            $page = Page::find($draftpageid);
+            $page = Page::findOrFail($draftpageid);
+            $modules = Module::all();
             $this->layout->content = View::make('pagemodule::content.content')->with('templates', $templates)->with('page', $page);
             $this->layout->menu = View::make('pagemodule::partials.menu')->with('page', $page);
-            $this->layout->content->example = View::make('pagemodule::examples.example')->with('draft', $draft)->with('template', $template);
+            // $this->layout->content->example = View::make('pagemodule::examples.example')->with('draft', $draft)->with('template', $template);
         }
     }
     

@@ -3,6 +3,6 @@ namespace Acdoorn\Pagemodule;
 
 use \Illuminate\Database\Eloquent\Model as Eloquent;
 
-class Content extends Eloquent {
-    protected $table = 'content';
+class Article extends Eloquent {
+    protected $table = 'article';
 }

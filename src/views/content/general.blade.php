@@ -4,6 +4,13 @@
 		<h1>General</h1>
 		@if(isset($page))
 		    {{ Form::model($page) }}
+	    	<?php if(isset($page->url->url)){} 
+	    	 if(isset($page->template->code)){} 
+	    	 if(isset($page->url->seoinfo->browsertitle)){} 
+	    	 if(isset($page->url->seoinfo->keywords)){} 
+	    	 if(isset($page->url->seoinfo->description)){} 
+	    	 if(isset($page->url->seoinfo->google)){} 
+	    	 	?>
 		@elseif(isset($draft))
 		    {{ Form::model($draft) }}
 	    	<?php if(isset($draft->drafturl->url)){} 
@@ -31,61 +38,72 @@
 			</div><br/>
 
 			<div class="input-group">
-			    <span class="input-group-addon">Enabled</span>
-			{{ Form::checkbox('enabled', Input::old('enabled')) }}
+				<span class="input-group-addon">Enabled</span>
+			{{ Form::checkbox('enabled', Input::old('enabled'), 0, ['class'=>'checkbox form-control']) }}
 			</div/><br/>
 
-			{{ Form::label('template_id', 'Template') }}
-			{{ Form::select('template_id', $templatearray, Input::old('templated_id')) }}
-			<br/><br/>
+			<div class="input-group">
+			    <span class="input-group-addon">Template</span>
+			{{ Form::select('template_id', $templatearray, Input::old('templated_id'), ['class'=>'form-control']) }}
+			</div/><br/>
 
 			@if(isset($page))
 			<h3>Seoinfo</h3>
 
-			{{ Form::label('url[seoinfo][browsertitle]', 'Title') }}
-			{{ Form::text('url[seoinfo][browsertitle]', Input::old('url[seoinfo][browsertitle]'), ['placeholder' => 'Browsertitle']) }}
+			<div class="input-group">
+			    <span class="input-group-addon">Browsertitle</span>
+			{{ Form::text('url[seoinfo][browsertitle]', Input::old('url[seoinfo][browsertitle]'), ['placeholder' => 'Browsertitle', 'class' => 'form-control']) }}
 			<br/><br/>
 
-			{{ Form::label('url[seoinfo][keywords]', 'Keywords') }}
-			{{ Form::text('url[seoinfo][keywords]', Input::old('url[seoinfo][keywords]'), ['placeholder' => 'Keywords']) }}
+			<div class="input-group">
+			    <span class="input-group-addon">Browsertitle</span>
+			{{ Form::text('url[seoinfo][keywords]', Input::old('url[seoinfo][keywords]'), ['placeholder' => 'Keywords', 'class' => 'form-control']) }}
 			<br/><br/>
 
-			{{ Form::label('url[seoinfo][description]', 'Description') }}
-			{{ Form::textarea('url[seoinfo][description]', Input::old('url[seoinfo][description]'), ['placeholder' => 'Description']) }}
+			<div class="input-group">
+			    <span class="input-group-addon">Browsertitle</span>
+			{{ Form::textarea('url[seoinfo][description]', Input::old('url[seoinfo][description]'), ['placeholder' => 'Description', 'class' => 'form-control', 'rows'=>'5']) }}
 			<br/><br/>
 
-			{{ Form::label('url[seoinfo][google]', 'Google bots') }}
-			{{ Form::select('url[seoinfo][google]', array('Index, tracking'=>'Index, tracking', 'Noindex, notracking' => 'Noindex, notracking'), Input::old('url[seoinfo][google]')) }}
+			<div class="input-group">
+			    <span class="input-group-addon">Browsertitle</span>
+			{{ Form::select('url[seoinfo][google]', array('Index, tracking'=>'Index, tracking', 'Noindex, notracking' => 'Noindex, notracking'), Input::old('url[seoinfo][google]', 1, ['class' => 'form-control'])) }}
 			<br/><br/>
 
-			{{ Form::label('url[seoinfo][URL]', 'URL') }}
-			{{ Form::text('url[URL]', Input::old('url[URL]'), ['placeholder' => 'URL']) }}
-			<br/><br/>
+			<div class="input-group">
+			    <span class="input-group-addon">Browsertitle</span>
+			{{ Form::text('url[URL]', Input::old('url[URL]'), ['placeholder' => 'URL', 'class' => 'form-control']) }}
+			</div>
 
 			@elseif(isset($draft))
 
 			<h3>Seoinfo</h3>
 			<div class="input-group">
 			    <span class="input-group-addon">Browsertitle</span>
-				{{ Form::text('drafturl[draftseoinfo][browsertitle]', Input::old('drafturl[draftseoinfo][browsertitle]'), ['placeholder' => 'Browsertitle', 'class'=>'form-control']) }}
+				{{ Form::text('drafturl[draftseoinfo][browsertitle]', Input::old('drafturl[draftseoinfo][browsertitle]'), ['placeholder' => 'Browsertitle', 'class' => 'form-control']) }}
 			</div></br>
 
-			{{ Form::label('drafturl[draftseoinfo][keywords]', 'Keywords') }}
-			{{ Form::text('drafturl[draftseoinfo][keywords]', Input::old('drafturl[draftseoinfo][keywords]'), ['placeholder' => 'Keywords']) }}
-			<br/><br/>
+			<div class="input-group">
+			    <span class="input-group-addon">Keywords</span>
+			{{ Form::text('drafturl[draftseoinfo][keywords]', Input::old('drafturl[draftseoinfo][keywords]'), ['placeholder' => 'Keywords', 'class'=>'form-control']) }}
+			</div></br>
 
-			{{ Form::label('drafturl[draftseoinfo][description]', 'Description') }}
-			{{ Form::textarea('drafturl[draftseoinfo][description]', Input::old('drafturl[draftseoinfo][description]'), ['placeholder' => 'Description']) }}
-			<br/><br/>
+			<div class="input-group">
+			    <span class="input-group-addon">Description</span>
+			{{ Form::textarea('drafturl[draftseoinfo][description]', Input::old('drafturl[draftseoinfo][description]'), ['placeholder' => 'Description', 'class'=>'form-control', 'rows'=>'5']) }}
+			</div></br>
 
-			{{ Form::label('drafturl[draftseoinfo][google]', 'Google bots') }}
-			{{ Form::select('drafturl[draftseoinfo][google]', array('Index, tracking'=>'Index, tracking', 'Noindex, notracking' => 'Noindex, notracking'), Input::old('drafturl[draftseoinfo][google]')) }}
-			<br/><br/>
+			<div class="input-group">
+			    <span class="input-group-addon">Google bots</span>
+			{{ Form::select('drafturl[draftseoinfo][google]', array('Index, tracking'=>'Index, tracking', 'Noindex, notracking' => 'Noindex, notracking'), Input::old('drafturl[draftseoinfo][google]'), ['class'=>'form-control']) }}
+			</div></br>
 
-			{{ Form::label('drafturl[URL]', 'URL') }}
-			{{ Form::text('drafturl[URL]', Input::old('drafturl[URL]'), ['placeholder' => 'URL']) }}
+			<div class="input-group">
+			    <span class="input-group-addon">URL</span>
+			{{ Form::text('drafturl[URL]', Input::old('drafturl[URL]'), ['placeholder' => 'URL', 'class'=>'form-control']) }}
+			</div></br>
 			@endif
-			{{ Form::submit('Save', array('style' =>'float:right; width:100px')) }}
+			{{ Form::submit('Save', array('class'=>'form-control btn-success')) }}
 		{{ Form::close() }}
     </div>
 </div>

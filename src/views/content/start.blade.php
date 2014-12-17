@@ -14,11 +14,11 @@
 			array_push($pagearray, 'Page '.$page->id.': '.$page->name);
 		}
 		?>
-			{{ Form::submit('New draft', ['name'=>'newdraft','class'=>'form-control']) }}<br/><br/>
+			{{ Form::submit('New draft', ['name'=>'newdraft','class'=>'form-control btn-success']) }}<br/><br/>
 			{{ Form::select('draft', $draftarray, 0, ['class'=>'form-control']) }}
-			{{ Form::submit("Select existing draft", ['name'=>'existingdraft','class'=>'form-control']) }}<br/><br/>
+			{{ Form::submit("Select existing draft", ['name'=>'existingdraft','class'=>'form-control btn-primary']) }}<br/><br/>
 			{{ Form::select('page', $pagearray, 0, ['class'=>'form-control']) }}
-			{{ Form::submit("Select existing page", ['name'=>'existingpage','class'=>'form-control']) }}
+			{{ Form::submit("Select existing page", ['name'=>'existingpage','class'=>'form-control btn-warning']) }}
 		{{ Form::close() }}
     </div>
 </div>

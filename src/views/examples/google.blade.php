@@ -1,5 +1,4 @@
 @section('example')
-  {{ HTML::style('packages/acdoorn/pagemodule/css/main.css') }}
 
 <?php 
 $title = $seoinfo->browsertitle;
