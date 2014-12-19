@@ -13,4 +13,8 @@ class Draftmodule extends Eloquent {
     public function draftsectiontype() {
     	return $this->hasMany('Acdoorn\Pagemodule\Draftsectiontype');
     }
+
+    public function articles() {
+    	return $this->hasMany('Acdoorn\Pagemodule\Article');
+    }
 }

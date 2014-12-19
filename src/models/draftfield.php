@@ -11,7 +11,7 @@ class Draftfield extends Eloquent {
     	return $this->belongsTo('Acdoorn\Pagemodule\Draftmodule', 'module_draft_id');
     }    
     
-    public function draftcontenttype() {
-    	return $this->belongsTo('Acdoorn\Pagemodule\Draftcontenttype', 'contenttype_draft_id');
+    public function draftfieldtype() {
+    	return $this->belongsTo('Acdoorn\Pagemodule\Draftfieldtype', 'fieldtype_draft_id');
     }
 }

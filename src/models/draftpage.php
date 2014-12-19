@@ -13,4 +13,8 @@ class Draftpage extends Eloquent {
     public function drafttemplate() {
     	return $this->belongsTo('Acdoorn\Pagemodule\Drafttemplate', 'template_id');
     }
+
+    public function articles() {
+    	return $this->hasMany('Acdoorn\Pagemodule\Article', 'page_draft_has_article');
+    }
 }
