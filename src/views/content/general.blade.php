@@ -52,26 +52,26 @@
 
 			<div class="input-group">
 			    <span class="input-group-addon">Browsertitle</span>
-			{{ Form::text('url[seoinfo][browsertitle]', Input::old('url[seoinfo][browsertitle]'), ['placeholder' => 'Browsertitle', 'class' => 'form-control']) }}
+			{{ Form::text('url[seoinfo][browsertitle]', Input::old('url[seoinfo][browsertitle]'), ['placeholder' => 'Browsertitle', 'class' => 'form-control', 'size'=>'55']) }}
 			<br/><br/>
 
 			<div class="input-group">
-			    <span class="input-group-addon">Browsertitle</span>
+			    <span class="input-group-addon">Keywords</span>
 			{{ Form::text('url[seoinfo][keywords]', Input::old('url[seoinfo][keywords]'), ['placeholder' => 'Keywords', 'class' => 'form-control']) }}
 			<br/><br/>
 
 			<div class="input-group">
-			    <span class="input-group-addon">Browsertitle</span>
-			{{ Form::textarea('url[seoinfo][description]', Input::old('url[seoinfo][description]'), ['placeholder' => 'Description', 'class' => 'form-control', 'rows'=>'5']) }}
+			    <span class="input-group-addon">Description</span>
+			{{ Form::textarea('url[seoinfo][description]', Input::old('url[seoinfo][description]'), ['placeholder' => 'Description', 'class' => 'form-control', 'rows'=>'5', 'max-length'=>'115']) }}
 			<br/><br/>
 
 			<div class="input-group">
-			    <span class="input-group-addon">Browsertitle</span>
+			    <span class="input-group-addon">Google Bots</span>
 			{{ Form::select('url[seoinfo][google]', array('Index, tracking'=>'Index, tracking', 'Noindex, notracking' => 'Noindex, notracking'), Input::old('url[seoinfo][google]', 1, ['class' => 'form-control'])) }}
 			<br/><br/>
 
 			<div class="input-group">
-			    <span class="input-group-addon">Browsertitle</span>
+			    <span class="input-group-addon">URL</span>
 			{{ Form::text('url[URL]', Input::old('url[URL]'), ['placeholder' => 'URL', 'class' => 'form-control']) }}
 			</div>
 
@@ -80,7 +80,7 @@
 			<h3>Seoinfo</h3>
 			<div class="input-group">
 			    <span class="input-group-addon">Browsertitle</span>
-				{{ Form::text('drafturl[draftseoinfo][browsertitle]', Input::old('drafturl[draftseoinfo][browsertitle]'), ['placeholder' => 'Browsertitle', 'class' => 'form-control']) }}
+				{{ Form::text('drafturl[draftseoinfo][browsertitle]', Input::old('drafturl[draftseoinfo][browsertitle]'), ['placeholder' => 'Browsertitle', 'class' => 'form-control', 'size'=>'55']) }}
 			</div></br>
 
 			<div class="input-group">
@@ -90,7 +90,7 @@
 
 			<div class="input-group">
 			    <span class="input-group-addon">Description</span>
-			{{ Form::textarea('drafturl[draftseoinfo][description]', Input::old('drafturl[draftseoinfo][description]'), ['placeholder' => 'Description', 'class'=>'form-control', 'rows'=>'5']) }}
+			{{ Form::textarea('drafturl[draftseoinfo][description]', Input::old('drafturl[draftseoinfo][description]'), ['placeholder' => 'Description', 'class'=>'form-control', 'rows'=>'5', 'max-length'=>'115']) }}
 			</div></br>
 
 			<div class="input-group">

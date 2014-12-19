@@ -39,37 +39,36 @@
 			  		<?php $fields = $module->draftfields;
 			  			  $value = '';?>
 			  		@foreach($fields as $field) 
-				  		<?php $contenttype = $field->draftcontenttype;?>
-			  			@if($contenttype->name == 'text')
+				  		<?php $fieldtype = $field->draftfieldtype;?>
+			  			@if($fieldtype->name == 'text')
 							<?php $value.= '<div class="input-group">
 							    <span class="input-group-addon">'.ucwords($field->name).'</span>'
-								. Form::text($field->name . '[]', Input::old($field->name), ['placeholder' => ucwords($field->name), 'class'=>'form-control']) .'</div><br/>'?>
-			  			@elseif($contenttype->name == 'textarea')
+								. Form::text($field->name, Input::old($field->name), ['placeholder' => ucwords($field->name), 'class'=>'form-control', 'required' => 'required']) .'</div><br/>'?>
+						@endif
+			  			@if($fieldtype->name == 'textarea')
 							<?php $value.= '<div class="input-group">
 							    <span class="input-group-addon">'.ucwords($field->name).'</span>'
-								. Form::textarea($field->name . '[]', Input::old($field->name), ['placeholder' => ucwords($field->name), 'class'=>'form-control']) .'</div><br/>'?>
-			  			@elseif($type->name == 'image') 
+								. Form::textarea($field->name, Input::old($field->name), ['placeholder' => ucwords($field->name), 'class'=>'form-control', 'style'=>'resize:none;', 'required' => 'required']) .'</div><br/>'?>
+						@endif
+			  			@if($fieldtype->name == 'image') 
 							<?php $value.= '<div class="input-group">
 							    <span class="input-group-addon">'.ucwords($field->name).'</span>'
-								. Form::file($contenttype->name . '[]', ['class'=>'form-control']) .'</div><br/>'
+								. Form::file($fieldtype->name, ['class'=>'form-control']) .'</div><br/>'
 								?>
 				  		@endif
-				  		@if($field == end($fields))
-				  			<?php $value.=  Form::hidden($contenttype->name . '[]', ['class'=>'form-control']);?>
-				  		@endif
 			  		@endforeach
-
+			  			<?php $value.=  Form::hidden('section[]', $module->id, ['class'=>'form-control']);?>
 			  		<option value="{{{$value}}}">{{$module->name}}</option>
 		  		@endforeach
 		  	</select>
 		  </div>
 		  <div id="sectiontabs" style="float:left; min-width:80%; max-width:80%;">
 			<ul>
-			@for($x = 1;$template->amountofsections >= $x; $x++)
+			@for($x = 1;$template->draftsections->count() >= $x; $x++)
 				<li><a onclick="refreshchoose()" href="{{Request::url()}}#sectiontabs-{{$x}}">Section {{$x}}</a></li>
 			@endfor
 			</ul>
-			@for($x = 1;$template->amountofsections >= $x; $x++)
+			@for($x = 1;$template->draftsections->count() >= $x; $x++)
 				<div id="sectiontabs-{{$x}}"><div class="update" id="update{{$x}}">Section {{$x}} is still empty</div></div>
 			@endfor
 		 </div>

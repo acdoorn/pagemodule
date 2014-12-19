@@ -60,17 +60,68 @@ class FormController extends BaseController {
 			case 'content':
 				$draftpage = Draftpage::find($draft_id);
 				$template = $draftpage->drafttemplate;
-				var_dump(Input::get('section.0'));
+				// var_dump(Input::get('section.0'));
 
 				
-				$value1 = Input::get('title.0');
-				/* foreach section
-					check contentform()
-						foreach field
-							input get(field);
-				*/
-				// echo Input::get('title.1');
-				// echo Input::get('title.2');
+				$x = 1;
+				foreach($template->draftsections as $section) {
+					$input = (INT)Input::get('section'.$x);
+					if($input != 0){
+						$module = Draftmodule::find($input);
+						$fields = $module->draftfields;
+
+		  				if($module->name == 'New article') {
+		  					$article = new Article;
+					  		foreach($fields as $field) {
+					  			$order = $field->order;
+						  		$fieldtype = $field->draftfieldtype;
+						  		$inputname = $field->name.$x;
+					  			if(Input::has($inputname)){
+				  					if($order == 1){
+					  					$article->name = Input::get($inputname);
+					  				}elseif($order == 2){
+					  					$article->description = Input::get($inputname);
+					  				}elseif($order == 3){
+					  					// $article->image = Input::get($inputname);
+					  				}
+						  		}elseif(Input::hasFile($inputname)) {
+						  			$file = Input::file($inputname);
+						  			$filename = $file->getClientOriginalName();
+						  			//image moven naar public path met $file = $file->move('images/uploads',  $filename); 
+						  			echo '<img class="img-responsive" src="'.$file.'" >'; 
+						  		}
+					  		}
+					  		echo 'Article:<br/>';
+			  				foreach($article->getAttributes() as $attribute) {
+			  					echo $attribute . '<br/>';
+			  				}
+			  				$article->madeby()->associate($module);
+			  				$article->save();
+			  			} elseif($module->name == 'News'){
+			  				$news = new News;
+			  				foreach($fields as $field) {
+					  			$order = $field->order;
+						  		$fieldtype = $field->draftfieldtype;
+						  		$inputname = $field->name.$x;
+					  			if(Input::has($inputname)){
+				  					if($order == 1){
+					  					$news->name = Input::get($inputname);
+					  				}elseif($order == 2){
+					  					$news->description = Input::get($inputname);
+					  				}
+						  		}
+					  		}
+					  		echo 'News:<br/>';
+			  				foreach($news->getAttributes() as $attribute) {
+			  					echo $attribute . '<br/>';
+			  				}
+			  				$news->madeby()->associate($module);
+			  				$news->save();
+			  			}
+					}
+					$x++;
+				}
+				// return Redirect::to('/CMS/pagemodule/draft/'.$draftpage->id.'/content')->with('draftpageid', $draftpage->id);
 			break;
 			case 'menu':
 

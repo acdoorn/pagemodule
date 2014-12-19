@@ -44,6 +44,9 @@ class HomeController extends BaseController {
         if($type == 'draft') {
             $draft = Draftpage::findOrFail($draftpageid);
             $template = $draft->drafttemplate;
+            foreach($template->draftsections as $section) {
+                $section->sectiontype;
+            }
             $modules = Draftmodule::all();
             $this->layout->content = View::make('pagemodule::content.content')->with('draft', $draft)->with('template', $template)->with('modules', $modules);
             $this->layout->menu = View::make('pagemodule::partials.menu')->with('draft', $draft);
@@ -63,11 +66,12 @@ class HomeController extends BaseController {
         $type = Request::segment(3);
         $menus = Draftmenu::all();
         $menuitems = Draftmenuitem::all();
+        $article = Article::all()->first();
         $this->layout->head = View::make('pagemodule::partials.head');
         if($type == 'draft') {
             $draft = Draftpage::find($draftpageid);
             $template = $draft->drafttemplate;
-            $this->layout->content = View::make('pagemodule::content.menu')->with('draft', $draft)->with('menus', $menus)->with('menuitems', $menuitems);
+            $this->layout->content = View::make('pagemodule::content.menu')->with('draft', $draft)->with('menus', $menus)->with('menuitems', $menuitems)->with('article', $article);
             $this->layout->menu = View::make('pagemodule::partials.menu')->with('draft', $draft);
         }
         if($type == 'page') {
