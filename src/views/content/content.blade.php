@@ -19,14 +19,7 @@
 		@else
 			{{ Redirect::to('/')}}
 		@endif
-
-		    {{ Form::model($item, ['files'     => true]) }}
-	    	<?php 
-	    	 if(!isset($item->drafttemplate)){}; 
-	    	 if(isset($item->drafttemplate)){
-	    	 	$template = $item->drafttemplate;
-	    	 } 
-?>		  		
+		{{Form::open(['files' => true])}}
 		<script type="text/javascript">
 			$(function() {
 				$( "#sectiontabs" ).tabs();
@@ -37,24 +30,29 @@
 		  	<select class="form-control" name="content[]" id="choose" style="width:100%;" size="5">
 		  		@foreach($modules as $module)
 			  		<?php $fields = $module->draftfields;
-			  			  $value = '';?>
+			  			if($module->value == 'article')
+			  			  $value = ''. Form::model($article, ['files' => true]);
+			  			elseif($module->value == 'news')
+			  				$value = ''. Form::model($news, ['files' => true])?>
 			  		@foreach($fields as $field) 
 				  		<?php $fieldtype = $field->draftfieldtype;?>
 			  			@if($fieldtype->name == 'text')
 							<?php $value.= '<div class="input-group">
 							    <span class="input-group-addon">'.ucwords($field->name).'</span>'
 								. Form::text($field->name, Input::old($field->name), ['placeholder' => ucwords($field->name), 'class'=>'form-control', 'required' => 'required']) .'</div><br/>'?>
-						@endif
-			  			@if($fieldtype->name == 'textarea')
+			  			@elseif($fieldtype->name == 'textarea')
 							<?php $value.= '<div class="input-group">
 							    <span class="input-group-addon">'.ucwords($field->name).'</span>'
 								. Form::textarea($field->name, Input::old($field->name), ['placeholder' => ucwords($field->name), 'class'=>'form-control', 'style'=>'resize:none;', 'required' => 'required']) .'</div><br/>'?>
-						@endif
-			  			@if($fieldtype->name == 'image') 
+			  			@elseif($fieldtype->name == 'image') 
 							<?php $value.= '<div class="input-group">
 							    <span class="input-group-addon">'.ucwords($field->name).'</span>'
-								. Form::file($fieldtype->name, ['class'=>'form-control']) .'</div><br/>'
+								. Form::file($field->name, ['class'=>'form-control']) .'</div><br/>'
 								?>
+			  			@else
+							<?php $value.= '<div class="input-group">
+							    <span class="input-group-addon">'.ucwords($field->name).'</span>'
+								. Form::text($field->name, Input::old($field->name), ['placeholder' => ucwords($field->name), 'class'=>'form-control', 'required' => 'required']) .'</div><br/>'?>
 				  		@endif
 			  		@endforeach
 			  			<?php $value.=  Form::hidden('section[]', $module->id, ['class'=>'form-control']);?>
@@ -64,13 +62,61 @@
 		  </div>
 		  <div id="sectiontabs" style="float:left; min-width:80%; max-width:80%;">
 			<ul>
-			@for($x = 1;$template->draftsections->count() >= $x; $x++)
+			<?php $x = 1; ?>
+			@foreach ($template->draftsections as $section)
 				<li><a onclick="refreshchoose()" href="{{Request::url()}}#sectiontabs-{{$x}}">Section {{$x}}</a></li>
-			@endfor
+			<?php $x++; ?>
+			@endforeach
 			</ul>
-			@for($x = 1;$template->draftsections->count() >= $x; $x++)
-				<div id="sectiontabs-{{$x}}"><div class="update" id="update{{$x}}">Section {{$x}} is still empty</div></div>
-			@endfor
+			<?php $x = 1; ?>
+			@foreach ($template->draftsections as $section)
+				<div id="sectiontabs-{{$x}}"><div class="update" id="update{{$x}}">
+					@foreach($section->articles as $article) 
+						@if($article->draftpages->find($item->id))
+						<?php $articlearray = $article->toArray();?>
+								<div class="input-group">
+								    <span class="input-group-addon">{{ucwords('title')}}</span>
+									{{Form::text('title'. $x, $articlearray['title'], ['placeholder' => ucwords($articlearray['title']), 'class'=>'form-control', 'required' => 'required'])}}
+								</div><br/>
+								<div class="input-group">
+								    <span class="input-group-addon">
+								    	{{ucwords('description')}}</span>
+									{{Form::textarea('description'. $x, $articlearray['description'], ['placeholder' => ucwords($articlearray['description']), 'class'=>'form-control', 'style'=>'resize:none;', 'required' => 'required'])}} 
+								</div><br/>
+									@if($articlearray['image'])
+										<span class="glyphicon glyphicon-ok"></span>Example of current image(displayed in 100 pixels):<img class="thumbnail" src="{{$articlearray['image']}}" width="100" height="100"/>
+										<br/>
+										{{Form::hidden('image'.$x, $articlearray['image'])}}
+									@endif
+									<div class="input-group">
+								    <span class="input-group-addon">{{ucwords('image')}}</span>
+								    {{Form::file('image'. $x, ['class'=>'form-control', 'value'=>$articlearray['image']])}}
+								</div><br/>
+								{{Form::hidden('section'.$x, 1)}}
+						@else
+							Section {{$x}} is still empty
+						@endif
+					@endforeach
+					@foreach($section->news as $news) 
+						@if($news->draftpages->find($item->id))
+						<?php $newsarray = $news->toArray();?>
+								<div class="input-group">
+								    <span class="input-group-addon">{{ucwords('title')}}</span>
+									{{Form::text('title'. $x, $newsarray['title'], ['placeholder' => ucwords($newsarray['title']), 'class'=>'form-control', 'required' => 'required'])}}
+								</div><br/>
+								<div class="input-group">
+								    <span class="input-group-addon">
+								    	{{ucwords('content')}}</span>
+									{{Form::textarea('content'. $x, $newsarray['content'], ['placeholder' => ucwords($newsarray['content']), 'class'=>'form-control', 'style'=>'resize:none;', 'required' => 'required'])}} 
+								</div><br/>
+								{{Form::hidden('section'.$x, 1)}}
+						@else
+							Section {{$x}} is still empty
+						@endif
+					@endforeach
+				</div></div>
+			<?php $x++; ?>
+			@endforeach
 		 </div>
 			{{Form::submit('Save', ['class'=>'form-control btn-success'])}}
 			{{Form::close()}}

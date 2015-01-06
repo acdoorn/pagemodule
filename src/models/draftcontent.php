@@ -3,8 +3,8 @@ namespace Acdoorn\Pagemodule;
 
 use \Illuminate\Database\Eloquent\Model as Eloquent;
 
-class Draftpage extends Eloquent {
-    protected $table = 'page_draft';
+class Draftcontent extends Eloquent {
+    protected $table = 'content_draft';
 
     public function drafturl() {
     	return $this->belongsTo('Acdoorn\Pagemodule\Drafturl', 'id');
@@ -15,7 +15,7 @@ class Draftpage extends Eloquent {
     }
 
     public function articles() {
-    	return $this->belongsToMany('Acdoorn\Pagemodule\Article', 'article_draftpage')->withPivot('article_id');
+    	return $this->hasMany('Acdoorn\Pagemodule\Article')->withPivot('article_id');
     }
 
     public function articlesections() {
@@ -27,6 +27,6 @@ class Draftpage extends Eloquent {
     }
 
     public function news() {
-        return $this->belongsToMany('Acdoorn\Pagemodule\News', 'news_draftpage')->withPivot('news_id');
+        return $this->hasMany('Acdoorn\Pagemodule\News')->withPivot('news_id');
     }
 }

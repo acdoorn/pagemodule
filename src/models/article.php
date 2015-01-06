@@ -11,5 +11,10 @@ class Article extends Eloquent {
     }
 
     public function draftpages() {
-    	return $this->belongsToMany('Acdoorn\Pagemodule\Draftpage')->withPivot('section_draft_id');
+    	return $this->belongsToMany('Acdoorn\Pagemodule\Draftpage', 'article_draftpage')->withPivot('draftpage_id');
     }
+
+    public function draftsections() {
+    	return $this->belongsToMany('Acdoorn\Pagemodule\Draftsection', 'article_draftpage')->withPivot('draftsection_id');
+    }
+}

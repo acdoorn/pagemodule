@@ -70,44 +70,60 @@ class FormController extends BaseController {
 						$module = Draftmodule::find($input);
 						$fields = $module->draftfields;
 
-		  				if($module->name == 'New article') {
+		  				if($module->value == 'article') {
 		  					$article = new Article;
+					  		foreach($fields as $field) {
+					  			$order = $field->order;
+						  		$fieldtype = $field->draftfieldtype;
+						  		$inputname = $field->name.$x;
+						  		// var_dump(Input::all());
+					  			if(Input::has($inputname) || Input::hasFile($inputname)){
+				  					if($order == 1){
+					  					$article->title = Input::get($inputname);
+					  				}elseif($order == 2){
+					  					$article->description = Input::get($inputname);
+					  				}elseif($order == 3){
+					  					if(Input::hasFile($inputname)){
+								  			if(Input::file($inputname)->isValid()){
+								  				$destinationPath = 'public/images/uploads/';
+								  				$destPathv2= "/images/uploads/";
+									  			$file = Input::file($inputname);
+									  			$filename = $file->getClientOriginalName();
+									  			$file->move($destinationPath, $filename);
+									  			//image moven naar public path met $file = $file->move('images/uploads/',  $filename); 
+									  			$article->image = $destPathv2.$filename;
+									  			// echo '<img src="'.$destPathv2.$filename.'">';
+									  		}
+									  	}
+								  		elseif(Input::has($inputname)) {
+									  			$filename = Input::get($inputname);
+									  			$article->image = $filename;
+								  		}
+					  				}
+						  		}
+					  		}
+					  		echo 'Article:<br/>';
+		  					$array = $article->getAttributes();
+			  				foreach($array as $attribute) {
+			  					echo $attribute . '<br/>';
+			  				}
+			  				if(!is_null($article->image)) {
+			  					echo '<img src="'.$article->image.'"><br/>';
+			  				}
+			  				$article->madeby()->associate($module);
+			  				$article->save();
+			  				$section->articles()->sync(array($article->id => ['draftpage_id'=>$draftpage->id]));
+			  			} elseif($module->value == 'news'){
+			  				$news = new News;
 					  		foreach($fields as $field) {
 					  			$order = $field->order;
 						  		$fieldtype = $field->draftfieldtype;
 						  		$inputname = $field->name.$x;
 					  			if(Input::has($inputname)){
 				  					if($order == 1){
-					  					$article->name = Input::get($inputname);
+					  					$news->title = Input::get($inputname);
 					  				}elseif($order == 2){
-					  					$article->description = Input::get($inputname);
-					  				}elseif($order == 3){
-					  					// $article->image = Input::get($inputname);
-					  				}
-						  		}elseif(Input::hasFile($inputname)) {
-						  			$file = Input::file($inputname);
-						  			$filename = $file->getClientOriginalName();
-						  			//image moven naar public path met $file = $file->move('images/uploads',  $filename); 
-						  			echo '<img class="img-responsive" src="'.$file.'" >'; 
-						  		}
-					  		}
-					  		echo 'Article:<br/>';
-			  				foreach($article->getAttributes() as $attribute) {
-			  					echo $attribute . '<br/>';
-			  				}
-			  				$article->madeby()->associate($module);
-			  				$article->save();
-			  			} elseif($module->name == 'News'){
-			  				$news = new News;
-			  				foreach($fields as $field) {
-					  			$order = $field->order;
-						  		$fieldtype = $field->draftfieldtype;
-						  		$inputname = $field->name.$x;
-					  			if(Input::has($inputname)){
-				  					if($order == 1){
-					  					$news->name = Input::get($inputname);
-					  				}elseif($order == 2){
-					  					$news->description = Input::get($inputname);
+					  					$news->content = Input::get($inputname);
 					  				}
 						  		}
 					  		}
@@ -117,6 +133,7 @@ class FormController extends BaseController {
 			  				}
 			  				$news->madeby()->associate($module);
 			  				$news->save();
+			  				$section->news()->sync(array($news->id => ['draftpage_id'=>$draftpage->id]));
 			  			}
 					}
 					$x++;
