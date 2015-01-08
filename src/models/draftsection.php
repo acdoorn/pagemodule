@@ -13,4 +13,12 @@ class Draftsection extends Eloquent {
     public function draftsectiontype() {
     	return $this->hasOne('Acdoorn\Pagemodule\Draftsectiontype');
     }
+
+    public function content() {
+    	return $this->hasMany('Acdoorn\Pagemodule\Draftcontent', 'contentid');
+    }
+
+    public function draftpages() {
+        return $this->belongsToMany('Acdoorn\Pagemodule\Draftpage', 'content_draft');
+    }
 }

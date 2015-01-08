@@ -40,15 +40,21 @@ class HomeController extends BaseController {
     public function showContent($draftpageid) 
     {
         $type = Request::segment(3);
+        $article = new Article;
+        $news = new News;
         //template ophalen aan de hand van draftpage, template wordt in general aan draftpage gekoppeld.
         if($type == 'draft') {
             $draft = Draftpage::findOrFail($draftpageid);
             $template = $draft->drafttemplate;
+            $x = 1;
+            $articles = array();
             foreach($template->draftsections as $section) {
                 $section->sectiontype;
+                // var_dump($section->draftpages->articles);
+                echo '<br/>';
             }
             $modules = Draftmodule::all();
-            $this->layout->content = View::make('pagemodule::content.content')->with('draft', $draft)->with('template', $template)->with('modules', $modules);
+            $this->layout->content = View::make('pagemodule::content.content')->with('draft', $draft)->with('template', $template)->with('modules', $modules)->with('article', $article)->with('news', $news);
             $this->layout->menu = View::make('pagemodule::partials.menu')->with('draft', $draft);
             // $this->layout->content->example = View::make('pagemodule::examples.example')->with('draft', $draft)->with('template', $template);
         }
