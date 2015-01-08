@@ -40,8 +40,8 @@ class HomeController extends BaseController {
     public function showContent($draftpageid) 
     {
         $type = Request::segment(3);
-        $article = Article::all()->first();
-        $news = News::all()->first();
+        $article = new Article;
+        $news = new News;
         //template ophalen aan de hand van draftpage, template wordt in general aan draftpage gekoppeld.
         if($type == 'draft') {
             $draft = Draftpage::findOrFail($draftpageid);

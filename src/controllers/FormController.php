@@ -3,6 +3,7 @@ use BaseController;
 use View;
 use Redirect;
 use Input;
+
 class FormController extends BaseController {
 
 	public function handleStart() {
@@ -26,7 +27,6 @@ class FormController extends BaseController {
 		$draftpage = new Draftpage;
 		$drafturl = new Drafturl;
 		$draftseoinfo = new Draftseoinfo;
-
 		$draftseoinfo->save();
 		$drafturl->seoinfo_id = $draftseoinfo->id;
 		$drafturl->save();
@@ -55,90 +55,128 @@ class FormController extends BaseController {
 				}
 				$draftpage->save();
 				return Redirect::to('/CMS/pagemodule/draft/'.$draftpage->id.'/general')->with('draftpageid', $draftpage->id);
-
 			break;
 			case 'content':
 				$draftpage = Draftpage::find($draft_id);
 				$template = $draftpage->drafttemplate;
-				// var_dump(Input::get('section.0'));
-
-				
 				$x = 1;
 				foreach($template->draftsections as $section) {
 					$input = (INT)Input::get('section'.$x);
 					if($input != 0){
 						$module = Draftmodule::find($input);
 						$fields = $module->draftfields;
-
-		  				if($module->value == 'article') {
-		  					$article = new Article;
-					  		foreach($fields as $field) {
-					  			$order = $field->order;
-						  		$fieldtype = $field->draftfieldtype;
-						  		$inputname = $field->name.$x;
-						  		// var_dump(Input::all());
-					  			if(Input::has($inputname) || Input::hasFile($inputname)){
-				  					if($order == 1){
-					  					$article->title = Input::get($inputname);
-					  				}elseif($order == 2){
-					  					$article->description = Input::get($inputname);
-					  				}elseif($order == 3){
-					  					if(Input::hasFile($inputname)){
-								  			if(Input::file($inputname)->isValid()){
-								  				$destinationPath = 'public/images/uploads/';
-								  				$destPathv2= "/images/uploads/";
-									  			$file = Input::file($inputname);
-									  			$filename = $file->getClientOriginalName();
-									  			$file->move($destinationPath, $filename);
-									  			//image moven naar public path met $file = $file->move('images/uploads/',  $filename); 
-									  			$article->image = $destPathv2.$filename;
-									  			// echo '<img src="'.$destPathv2.$filename.'">';
+						switch($module->value) {
+							case 'article':
+								if(Input::has('article_id')) {
+									$article = Article::find(Input::get('article_id'));
+								}else {
+				  					$article = Article::create();									
+								}
+								// var_dump($article);
+						  		foreach($fields as $field) {
+						  			$order = $field->order;
+							  		$fieldtype = $field->draftfieldtype;
+							  		$inputname = $field->name.$x;
+						  			if(Input::has($inputname) || Input::hasFile($inputname)){
+					  					if($order == 1){
+						  					$article->name = Input::get($inputname);
+						  				}elseif($order == 2){
+						  					$article->description = Input::get($inputname);
+						  				}elseif($order == 3){
+						  					if(Input::hasFile($inputname)){
+									  			if(Input::file($inputname)->isValid()){
+									  				if(getimagesize(Input::file($inputname))) {
+										  				$destinationPath = 'public/images/uploads/';
+										  				$destPathv2= "/images/uploads/";
+											  			$file = Input::file($inputname);
+											  			$filename = $file->getClientOriginalName();
+											  			$file->move($destinationPath, $filename);
+											  			//image moven naar public path met $file = $file->move('images/uploads/',  $filename); 
+											  			$article->image = $destPathv2.$filename;
+											  		}
+										  		}
+										  	}
+									  		elseif(Input::has($inputname)) {
+										  			$filename = Input::get($inputname);
+										  			$article->image = $filename;
 									  		}
-									  	}
-								  		elseif(Input::has($inputname)) {
-									  			$filename = Input::get($inputname);
-									  			$article->image = $filename;
-								  		}
-					  				}
+						  				}
+							  		}
 						  		}
-					  		}
-					  		echo 'Article:<br/>';
-		  					$array = $article->getAttributes();
-			  				foreach($array as $attribute) {
-			  					echo $attribute . '<br/>';
-			  				}
-			  				if(!is_null($article->image)) {
-			  					echo '<img src="'.$article->image.'"><br/>';
-			  				}
-			  				$article->madeby()->associate($module);
-			  				$article->save();
-			  				$section->articles()->sync(array($article->id => ['draftpage_id'=>$draftpage->id]));
-			  			} elseif($module->value == 'news'){
-			  				$news = new News;
-					  		foreach($fields as $field) {
-					  			$order = $field->order;
-						  		$fieldtype = $field->draftfieldtype;
-						  		$inputname = $field->name.$x;
-					  			if(Input::has($inputname)){
-				  					if($order == 1){
-					  					$news->title = Input::get($inputname);
-					  				}elseif($order == 2){
-					  					$news->content = Input::get($inputname);
-					  				}
+						  		echo 'Article:<br/>';
+			  					// $array = $article->getAttributes();
+			  					// //Uncomment for testing
+				  				// foreach($array as $attribute) {
+				  				// 	echo $attribute . '<br/>';
+				  				// }
+				  				if(!is_null($article->image)) {
+				  					echo '<img src="'.$article->image.'"><br/>';
+				  				}
+				  				$article->madeby()->associate($module);
+				  				$article->save();
+				  				if($content = Draftcontent::where('draftpage_id', '=', $draftpage->id)->where('draftsection_id', '=', $section->id)->first())
+				  				{
+				  					$content->draftmodule()->associate($module);
+				  					$content->article()->associate($article);
+				  					$content->save();
+				  				}
+				  				else {
+				  					$content = new Draftcontent;
+				  					$content->draftpage()->associate($draftpage);
+				  					$content->draftsection()->associate($section);
+				  					$content->draftmodule()->associate($module);
+				  					$content->article()->associate($article);
+				  					$content->save();
+				  				}
+				  				$module = null;
+							break;
+							case 'news':
+				  				if(Input::has('news_id')) {
+									$news = News::find(Input::get('news_id'));
+								}else {
+				  					$news = News::create();									
+								}
+						  		foreach($fields as $field) {
+						  			$order = $field->order;
+							  		$fieldtype = $field->draftfieldtype;
+							  		$inputname = $field->name.$x;
+						  			if(Input::has($inputname) || Input::hasFile($inputname)){
+					  					if($order == 1){
+						  					$news->title = Input::get($inputname);
+						  				}elseif($order == 2){
+						  					$news->content = Input::get($inputname);
+						  				}
+							  		}
 						  		}
-					  		}
-					  		echo 'News:<br/>';
-			  				foreach($news->getAttributes() as $attribute) {
-			  					echo $attribute . '<br/>';
-			  				}
-			  				$news->madeby()->associate($module);
-			  				$news->save();
-			  				$section->news()->sync(array($news->id => ['draftpage_id'=>$draftpage->id]));
-			  			}
+						  		echo 'News:<br/>';
+			  					// $array = $news->getAttributes();
+			  					// // Uncomment for testing
+				  				// foreach($array as $attribute) {
+				  				// 	echo $attribute . '<br/>';
+				  				// }
+				  				$news->madeby()->associate($module);
+				  				$news->save();
+				  				if($content = Draftcontent::where('draftpage_id', '=', $draftpage->id)->where('draftsection_id', '=', $section->id)->first())
+				  				{
+				  					$content->draftmodule()->associate($module);
+				  					$content->news()->associate($news);
+				  					$content->save();
+				  				}
+				  				else {
+				  					$content = new Draftcontent();
+				  					$content->draftpage()->associate($draftpage);
+				  					$content->draftsection()->associate($section);
+				  					$content->draftmodule()->associate($module);
+				  					$content->news()->associate($news);
+				  					$content->save();
+				  				}
+				  				$module = null;
+							break;
+						}
 					}
 					$x++;
 				}
-				// return Redirect::to('/CMS/pagemodule/draft/'.$draftpage->id.'/content')->with('draftpageid', $draftpage->id);
+				return Redirect::to('/CMS/pagemodule/draft/'.$draftpage->id.'/content')->with('draftpageid', $draftpage->id);
 			break;
 			case 'menu':
 

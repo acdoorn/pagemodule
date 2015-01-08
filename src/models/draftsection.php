@@ -14,15 +14,11 @@ class Draftsection extends Eloquent {
     	return $this->hasOne('Acdoorn\Pagemodule\Draftsectiontype');
     }
 
-    public function articles() {
-    	return $this->belongsToMany('Acdoorn\Pagemodule\Article', 'article_draftpage')->withPivot('article_id');
+    public function content() {
+    	return $this->hasMany('Acdoorn\Pagemodule\Draftcontent', 'contentid');
     }
 
     public function draftpages() {
-        return $this->belongsToMany('Acdoorn\Pagemodule\Draftpage', 'article_draftpage')->withPivot('page_id');
-    }
-
-    public function news() {
-        return $this->belongsToMany('Acdoorn\Pagemodule\News', 'news_draftpage')->withPivot('news_id');
+        return $this->belongsToMany('Acdoorn\Pagemodule\Draftpage', 'content_draft');
     }
 }

@@ -6,27 +6,23 @@ use \Illuminate\Database\Eloquent\Model as Eloquent;
 class Draftcontent extends Eloquent {
     protected $table = 'content_draft';
 
-    public function drafturl() {
-    	return $this->belongsTo('Acdoorn\Pagemodule\Drafturl', 'id');
+    public function draftmodule() {
+        return $this->belongsTo('Acdoorn\Pagemodule\Draftmodule', 'draftmodule_id');
     }
 
-    public function drafttemplate() {
-    	return $this->belongsTo('Acdoorn\Pagemodule\Drafttemplate', 'template_id');
+    public function draftpage() {
+        return $this->belongsTo('Acdoorn\Pagemodule\Draftpage', 'draftpage_id');
     }
 
-    public function articles() {
-    	return $this->hasMany('Acdoorn\Pagemodule\Article')->withPivot('article_id');
-    }
-
-    public function articlesections() {
-        return $this->belongsToMany('Acdoorn\Pagemodule\Draftsection', 'article_draftpage')->withPivot('draftsection_id');
-    }
-
-    public function newssections() {
-        return $this->belongsToMany('Acdoorn\Pagemodule\Draftsection', 'news_draftpage')->withPivot('draftsection_id');
+    public function draftsection() {
+        return $this->belongsTo('Acdoorn\Pagemodule\Draftsection', 'draftsection_id');
     }
 
     public function news() {
-        return $this->hasMany('Acdoorn\Pagemodule\News')->withPivot('news_id');
+        return $this->belongsTo('Acdoorn\Pagemodule\News', 'contentid');
+    }
+
+    public function article() {
+        return $this->belongsTo('Acdoorn\Pagemodule\Article', 'contentid');
     }
 }

@@ -71,49 +71,53 @@
 			<?php $x = 1; ?>
 			@foreach ($template->draftsections as $section)
 				<div id="sectiontabs-{{$x}}"><div class="update" id="update{{$x}}">
-					@foreach($section->articles as $article) 
-						@if($article->draftpages->find($item->id))
-						<?php $articlearray = $article->toArray();?>
-								<div class="input-group">
-								    <span class="input-group-addon">{{ucwords('title')}}</span>
-									{{Form::text('title'. $x, $articlearray['title'], ['placeholder' => ucwords($articlearray['title']), 'class'=>'form-control', 'required' => 'required'])}}
-								</div><br/>
-								<div class="input-group">
-								    <span class="input-group-addon">
-								    	{{ucwords('description')}}</span>
-									{{Form::textarea('description'. $x, $articlearray['description'], ['placeholder' => ucwords($articlearray['description']), 'class'=>'form-control', 'style'=>'resize:none;', 'required' => 'required'])}} 
-								</div><br/>
-									@if($articlearray['image'])
-										<span class="glyphicon glyphicon-ok"></span>Example of current image(displayed in 100 pixels):<img class="thumbnail" src="{{$articlearray['image']}}" width="100" height="100"/>
-										<br/>
-										{{Form::hidden('image'.$x, $articlearray['image'])}}
-									@endif
+					<?php 
+						foreach($item->content as $content) {
+							if($section->id == $content->draftsection_id) {
+								if($content->article != null){
+									if($content->article->madeby == $content->draftmodule){
+										$articlearray = $content->article->toArray();?>
+										<div class="input-group">
+										    <span class="input-group-addon">{{ucwords('name')}}</span>
+											{{Form::text('name'. $x, $articlearray['name'], ['placeholder' => ucwords($articlearray['name']), 'class'=>'form-control', 'required' => 'required'])}}
+										</div><br/>
+										<div class="input-group">
+										    <span class="input-group-addon">
+										    	{{ucwords('description')}}</span>
+											{{Form::textarea('description'. $x, $articlearray['description'], ['placeholder' => ucwords($articlearray['description']), 'class'=>'form-control', 'style'=>'resize:none;', 'required' => 'required'])}} 
+										</div><br/>
+											@if($articlearray['image'])
+												<span class="glyphicon glyphicon-ok"></span>Example of current image(displayed in 100 pixels):<img class="thumbnail" src="{{$articlearray['image']}}" width="100" height="100"/>
+												<br/>
+												{{Form::hidden('image'.$x, $articlearray['image'])}}
+											@endif
+											<div class="input-group">
+										    <span class="input-group-addon">{{ucwords('image')}}</span>
+										    {{Form::file('image'. $x, ['class'=>'form-control', 'value'=>$articlearray['image']])}}
+										</div><br/>
+										{{Form::hidden('article_id', $content->article->id)}}
+										{{Form::hidden('section'.$x, $content->draftmodule->id)}}
+								<?php
+									}
+								}
+								if($content->news != null) {
+									if($content->news->madeby == $content->draftmodule){
+										$newsarray = $content->news->toArray();?>
 									<div class="input-group">
-								    <span class="input-group-addon">{{ucwords('image')}}</span>
-								    {{Form::file('image'. $x, ['class'=>'form-control', 'value'=>$articlearray['image']])}}
-								</div><br/>
-								{{Form::hidden('section'.$x, 1)}}
-						@else
-							Section {{$x}} is still empty
-						@endif
-					@endforeach
-					@foreach($section->news as $news) 
-						@if($news->draftpages->find($item->id))
-						<?php $newsarray = $news->toArray();?>
-								<div class="input-group">
-								    <span class="input-group-addon">{{ucwords('title')}}</span>
-									{{Form::text('title'. $x, $newsarray['title'], ['placeholder' => ucwords($newsarray['title']), 'class'=>'form-control', 'required' => 'required'])}}
-								</div><br/>
-								<div class="input-group">
-								    <span class="input-group-addon">
-								    	{{ucwords('content')}}</span>
-									{{Form::textarea('content'. $x, $newsarray['content'], ['placeholder' => ucwords($newsarray['content']), 'class'=>'form-control', 'style'=>'resize:none;', 'required' => 'required'])}} 
-								</div><br/>
-								{{Form::hidden('section'.$x, 1)}}
-						@else
-							Section {{$x}} is still empty
-						@endif
-					@endforeach
+									    <span class="input-group-addon">{{ucwords('title')}}</span>
+										{{Form::text('title'. $x, $newsarray['title'], ['placeholder' => ucwords($newsarray['title']), 'class'=>'form-control', 'required' => 'required'])}}
+									</div><br/>
+									<div class="input-group">
+									    <span class="input-group-addon">
+									    	{{ucwords('content')}}</span>
+										{{Form::textarea('content'. $x, $newsarray['content'], ['placeholder' => ucwords($newsarray['content']), 'class'=>'form-control', 'style'=>'resize:none;', 'required' => 'required'])}} 
+									</div><br/>
+									{{Form::hidden('news_id', $content->news->id)}}
+									{{Form::hidden('section'.$x, $content->draftmodule->id)}}<?php
+									}
+								}
+							}
+						}?>
 				</div></div>
 			<?php $x++; ?>
 			@endforeach
