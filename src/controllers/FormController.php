@@ -66,6 +66,7 @@ class FormController extends BaseController {
 					if($input != 0){
 						$module = Draftmodule::find($input);
 						$fields = $module->draftfields;
+		  				$contenttemplate = Draftcontenttemplate::find((INT)Input::get('contenttemplates'.$x));
 						switch($module->value) {
 							case 'article':
 								if(Input::has('article_id'.$x)) {
@@ -104,11 +105,11 @@ class FormController extends BaseController {
 							  		}
 						  		}
 			  					/* Uncomment for testing */
-						  		echo 'Article:<br/>';
-			  					$array = $article->getAttributes();
-				  				foreach($array as $attribute) {
-				  					echo $attribute . '<br/>';
-				  				}
+						  		// echo 'Article:<br/>';
+			  					// $array = $article->getAttributes();
+				  				// foreach($array as $attribute) {
+				  				// 	echo $attribute . '<br/>';
+				  				// }
 				  				
 				  				if(!is_null($article->image)) {
 				  					echo '<img src="'.$article->image.'"><br/>';
@@ -119,6 +120,7 @@ class FormController extends BaseController {
 				  				{
 				  					$content->draftmodule()->associate($module);
 				  					$content->article()->associate($article);
+				  					$content->layout()->associate($contenttemplate);
 				  					$content->save();
 				  				}
 				  				else {
@@ -127,6 +129,7 @@ class FormController extends BaseController {
 				  					$content->draftsection()->associate($section);
 				  					$content->draftmodule()->associate($module);
 				  					$content->article()->associate($article);
+				  					$content->layout()->associate($contenttemplate);
 				  					$content->save();
 				  				}
 				  				$module = null;
@@ -151,11 +154,11 @@ class FormController extends BaseController {
 						  		}
 						  		
 			  					// Uncomment for testing
-						  		echo 'News:<br/>';
-			  					$array = $news->getAttributes();
-				  				foreach($array as $attribute) {
-				  					echo $attribute . '<br/>';
-				  				}
+						  		// echo 'News:<br/>';
+			  					// $array = $news->getAttributes();
+				  				// foreach($array as $attribute) {
+				  				// 	echo $attribute . '<br/>';
+				  				// }
 				  				
 				  				$news->madeby()->associate($module);
 				  				$news->save();
@@ -163,6 +166,7 @@ class FormController extends BaseController {
 				  				{
 				  					$content->draftmodule()->associate($module);
 				  					$content->news()->associate($news);
+				  					$content->layout()->associate($contenttemplate);
 				  					$content->save();
 				  				}
 				  				else {
@@ -171,6 +175,7 @@ class FormController extends BaseController {
 				  					$content->draftsection()->associate($section);
 				  					$content->draftmodule()->associate($module);
 				  					$content->news()->associate($news);
+				  					$content->layout()->associate($contenttemplate);
 				  					$content->save();
 				  				}
 				  				$module = null;
@@ -180,7 +185,7 @@ class FormController extends BaseController {
 					$x++;
 				}
 				// Comment next line for testing
-				// return Redirect::to('/CMS/pagemodule/draft/'.$draftpage->id.'/content')->with('draftpageid', $draftpage->id);
+				return Redirect::to('/CMS/pagemodule/draft/'.$draftpage->id.'/content')->with('draftpageid', $draftpage->id);
 				// 
 			break;
 			case 'menu':

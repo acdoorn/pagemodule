@@ -29,7 +29,12 @@
 		  	<select class="form-control" name="content[]" id="choose" style="width:100%;" size="5">
 		  		@foreach($modules as $module)
 			  		<?php $fields = $module->draftfields;
-			  		$value= '';?>
+			  		$value= '';
+		        	$contenttemplates = array();
+			        foreach($module->draftcontenttemplates as $contenttemplate) {
+			            $contenttemplates[$contenttemplate->id] = $contenttemplate->name;
+			        }
+			  		?>
 			  		@foreach($fields as $field) 
 				  		<?php $fieldtype = $field->draftfieldtype;?>
 			  			@if($fieldtype->name == 'text')
@@ -51,7 +56,11 @@
 								. Form::text($field->name, Input::old($field->name), ['placeholder' => ucwords($field->name), 'class'=>'form-control', 'required' => 'required']) .'</div><br/>'?>
 				  		@endif
 			  		@endforeach
-			  			<?php $value .= Form::hidden('sections[]', $module->id, ['class'=>'sections']);?>
+			  			<?php $value .= Form::hidden('sections[]', $module->id, ['class'=>'sections']).
+			  			'<div class="input-group">
+							    <span class="input-group-addon">Layout</span>'
+			  							.Form::select('contenttemplates[]', $contenttemplates, null, ['class'=>'form-control']);?>
+			  						</div>
 			  		<option value="{{{$value}}}">{{$module->name}}</option>
 		  		@endforeach
 		  	</select>
@@ -80,6 +89,10 @@
 								if($section->id == $content->draftsection_id) {
 									if($content->article != null){
 										if($content->article->madeby == $content->draftmodule){
+								        	$contenttemplates = array();
+									        foreach($content->draftmodule->draftcontenttemplates as $contenttemplate) {
+									            $contenttemplates[$contenttemplate->id] = $contenttemplate->name;
+									        }
 											$articlearray = $content->article->toArray();?>
 											<div class="input-group">
 											    <span class="input-group-addon">{{ucwords('name')}}</span>
@@ -106,6 +119,10 @@
 									}
 									if($content->news != null) {
 										if($content->news->madeby == $content->draftmodule){
+								        	$contenttemplates = array();
+									        foreach($content->draftmodule->draftcontenttemplates as $contenttemplate) {
+									            $contenttemplates[$contenttemplate->id] = $contenttemplate->name;
+									        }
 											$newsarray = $content->news->toArray();?>
 										<div class="input-group">
 										    <span class="input-group-addon">{{ucwords('title')}}</span>
@@ -120,8 +137,14 @@
 										{{Form::hidden('section'.$x, $content->draftmodule->id)}}<?php
 										}
 									}
+
+							echo '<div class="input-group">
+								    <span class="input-group-addon">Layout</span>'.
+								    Form::select('contenttemplates'.$x, $contenttemplates, $content->layout->id, ['class'=>'form-control contenttemplates']).
+							    '</div>';
 								}
-							}?>
+							}
+							?>
 					</div>
 				</div>
 			<?php $x++; ?>

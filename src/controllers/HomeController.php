@@ -42,6 +42,7 @@ class HomeController extends BaseController {
         $type = Request::segment(3);
         $article = new Article;
         $news = new News;
+        $contenttemplates = Draftcontenttemplate::all();
         //template ophalen aan de hand van draftpage, template wordt in general aan draftpage gekoppeld.
         if($type == 'draft') {
             $draft = Draftpage::findOrFail($draftpageid);
@@ -53,7 +54,7 @@ class HomeController extends BaseController {
                 // var_dump($section->draftpages->articles);
             }
             $modules = Draftmodule::all();
-            $this->layout->content = View::make('pagemodule::content.content')->with('draft', $draft)->with('template', $template)->with('modules', $modules)->with('article', $article)->with('news', $news);
+            $this->layout->content = View::make('pagemodule::content.content')->with('draft', $draft)->with('template', $template)->with('modules', $modules)->with('article', $article)->with('news', $news)->with('contenttemplates', $contenttemplates);
             $this->layout->menu = View::make('pagemodule::partials.menu')->with('draft', $draft);
             // $this->layout->content->example = View::make('pagemodule::examples.example')->with('draft', $draft)->with('template', $template);
         }
