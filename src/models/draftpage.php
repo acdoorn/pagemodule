@@ -25,4 +25,8 @@ class Draftpage extends Eloquent {
     public function sections() {
         return $this->belongsToMany('Acdoorn\Pagemodule\Draftsection', 'content_draft', 'draftpage_id', 'draftsection_id');
     }
+
+    public function draftmenuitems() {
+        return $this->hasMany('Acdoorn\Pagemodule\Draftmenuitem');
+    }
 }

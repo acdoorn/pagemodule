@@ -24,7 +24,7 @@ class HomeController extends BaseController {
             $seoinfo = $draft->drafturl->draftseoinfo;
             $this->layout->menu = View::make('pagemodule::partials.menu')->with('draft', $draft);
             $this->layout->content = View::make('pagemodule::content.general')->with('templates', $templates)->with('draft', $draft);
-            $this->layout->content->example = View::make('pagemodule::examples.google')->with('draft', $draft)->with('url', $url)->with('seoinfo', $seoinfo);
+            $this->layout->content->google = View::make('pagemodule::examples.google')->with('draft', $draft)->with('url', $url)->with('seoinfo', $seoinfo);
         }
         if($type == 'page') {
             $page = Page::findOrFail($draftpageid);
@@ -33,7 +33,7 @@ class HomeController extends BaseController {
             $seoinfo = $page->url->seoinfo;
             $this->layout->menu = View::make('pagemodule::partials.menu')->with('page', $page);
             $this->layout->content = View::make('pagemodule::content.general')->with('templates', $templates)->with('page', $page);
-            $this->layout->content->example = View::make('pagemodule::examples.google')->with('page', $page)->with('url', $url)->with('seoinfo', $seoinfo);
+            $this->layout->content->google = View::make('pagemodule::examples.google')->with('page', $page)->with('url', $url)->with('seoinfo', $seoinfo);
         }
     }
 
@@ -51,7 +51,6 @@ class HomeController extends BaseController {
             foreach($template->draftsections as $section) {
                 $section->sectiontype;
                 // var_dump($section->draftpages->articles);
-                echo '<br/>';
             }
             $modules = Draftmodule::all();
             $this->layout->content = View::make('pagemodule::content.content')->with('draft', $draft)->with('template', $template)->with('modules', $modules)->with('article', $article)->with('news', $news);
@@ -71,19 +70,30 @@ class HomeController extends BaseController {
     {
         $type = Request::segment(3);
         $menus = Draftmenu::all();
-        $menuitems = Draftmenuitem::all();
-        $article = Article::all()->first();
+        $menupositions = Draftmenuposition::all();
         $this->layout->head = View::make('pagemodule::partials.head');
         if($type == 'draft') {
-            $draft = Draftpage::find($draftpageid);
-            $template = $draft->drafttemplate;
-            $this->layout->content = View::make('pagemodule::content.menu')->with('draft', $draft)->with('menus', $menus)->with('menuitems', $menuitems)->with('article', $article);
-            $this->layout->menu = View::make('pagemodule::partials.menu')->with('draft', $draft);
+            if($draft = Draftpage::findOrFail($draftpageid)) {
+                $this->layout->content = View::make('pagemodule::content.menu')->with('draft', $draft)->with('menus', $menus)->with('menupositions', $menupositions);
+                $this->layout->menu = View::make('pagemodule::partials.menu')->with('draft', $draft);
+                $this->layout->content->menuexample = View::make('pagemodule::examples.menu')->with('draft', $draft);
+            }
+            else {
+                $this->layout->content = View::make('pagemodule::error.404notfound');
+                $this->layout->menu = View::make('pagemodule::partials.menu');
+
+            }
         }
         if($type == 'page') {
-            $page = Page::find($draftpageid);
-            $this->layout->content = View::make('pagemodule::content.menu')->with('page', $page)->with('menus', $menus)->with('menuitems', $menuitems);
-            $this->layout->menu = View::make('pagemodule::partials.menu')->with('page', $page);
+            if($page = Page::find($draftpageid)) {
+                $this->layout->content = View::make('pagemodule::content.menu')->with('page', $page)->with('menus', $menus)->with('menuitems', $menuitems);
+                $this->layout->menu = View::make('pagemodule::partials.menu')->with('page', $page);
+                $this->layout->content->menuexample = View::make('pagemodule::examples.menu')->with('page', $page)->with('menus', $menus);
+            }
+            else {
+                $this->layout->content = View::make('pagemodule::error.404notfound');
+                $this->layout->menu = View::make('pagemodule::partials.menu');
+            }
         }
         
     }
@@ -93,10 +103,16 @@ class HomeController extends BaseController {
         $type = Request::segment(3);
         $this->layout->head = View::make('pagemodule::partials.head');
         if($type == 'draft') {
-            $draft = Draftpage::find($draftpageid);
-            $template = $draft->drafttemplate;
+            $draft = Draftpage::findOrFail($draftpageid);
+            $url = $draft->drafturl;
+            $seoinfo = $draft->drafturl->draftseoinfo;
             $this->layout->content = View::make('pagemodule::content.summary')->with('draft', $draft);
+            // $this->layout->content->general = View::make('pagemodule::examples.example')->with('draft', $draft);
+            $this->layout->content->google = View::make('pagemodule::examples.google')->with('draft', $draft)->with('url', $url)->with('seoinfo', $seoinfo);
+            // $this->layout->content->content = View::make('pagemodule::examples.general')->with('draft', $draft);
+            $this->layout->content->menuexample = View::make('pagemodule::examples.menu')->with('draft', $draft);
             $this->layout->menu = View::make('pagemodule::partials.menu')->with('draft', $draft);
+
         }
         if($type == 'page') {
             $page = Page::find($draftpageid);

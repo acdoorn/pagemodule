@@ -1,4 +1,4 @@
-@section('example')
+@section('google')
 
 <?php 
 $title = $seoinfo->browsertitle;
