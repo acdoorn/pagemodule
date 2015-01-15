@@ -1,7 +1,7 @@
 @section('content')
+<h1>General</h1>
 <div class="col-md-6" role="main">
     <div class="bs-docs-section">
-		<h1>General</h1>
 		@if(isset($page))
 		    {{ Form::model($page) }}
 	    	<?php if(isset($page->url->url)){} 
@@ -21,7 +21,7 @@
 	    	 if(isset($draft->drafturl->draftseoinfo->google)){} 
 	    	 	?>
 		@else
-			{{Form::open()/* error? */}}
+		<!-- error -->
 		@endif
 		<?php 
 		$counter = 1;
@@ -49,7 +49,6 @@
 
 			@if(isset($page))
 			<h3>Seoinfo</h3>
-
 			<div class="input-group">
 			    <span class="input-group-addon">Browsertitle</span>
 			{{ Form::text('url[seoinfo][browsertitle]', Input::old('url[seoinfo][browsertitle]'), ['placeholder' => 'Browsertitle', 'class' => 'form-control', 'size'=>'55']) }}
@@ -109,7 +108,7 @@
 </div>
 <div class="col-md-6">
     <div class="bs-docs-section">
-        @yield('example')
+        @yield('google')
     </div>
 </div>
 @stop

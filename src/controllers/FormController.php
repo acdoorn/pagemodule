@@ -61,18 +61,18 @@ class FormController extends BaseController {
 				$template = $draftpage->drafttemplate;
 				$x = 1;
 				foreach($template->draftsections as $section) {
-					$input = (INT)Input::get('section'.$x);
+					$data = Input::all();
+					$input = Input::get('section'.$x);
 					if($input != 0){
 						$module = Draftmodule::find($input);
 						$fields = $module->draftfields;
 						switch($module->value) {
 							case 'article':
-								if(Input::has('article_id')) {
-									$article = Article::find(Input::get('article_id'));
+								if(Input::has('article_id'.$x)) {
+									$article = Article::find(Input::get('article_id'.$x));
 								}else {
-				  					$article = Article::create();									
+				  					$article = new Article;									
 								}
-								// var_dump($article);
 						  		foreach($fields as $field) {
 						  			$order = $field->order;
 							  		$fieldtype = $field->draftfieldtype;
@@ -91,7 +91,7 @@ class FormController extends BaseController {
 											  			$file = Input::file($inputname);
 											  			$filename = $file->getClientOriginalName();
 											  			$file->move($destinationPath, $filename);
-											  			//image moven naar public path met $file = $file->move('images/uploads/',  $filename); 
+											  			// Image moven naar public path met $file = $file->move('images/uploads/',  $filename); 
 											  			$article->image = $destPathv2.$filename;
 											  		}
 										  		}
@@ -103,12 +103,13 @@ class FormController extends BaseController {
 						  				}
 							  		}
 						  		}
+			  					/* Uncomment for testing */
 						  		echo 'Article:<br/>';
-			  					// $array = $article->getAttributes();
-			  					// //Uncomment for testing
-				  				// foreach($array as $attribute) {
-				  				// 	echo $attribute . '<br/>';
-				  				// }
+			  					$array = $article->getAttributes();
+				  				foreach($array as $attribute) {
+				  					echo $attribute . '<br/>';
+				  				}
+				  				
 				  				if(!is_null($article->image)) {
 				  					echo '<img src="'.$article->image.'"><br/>';
 				  				}
@@ -131,10 +132,10 @@ class FormController extends BaseController {
 				  				$module = null;
 							break;
 							case 'news':
-				  				if(Input::has('news_id')) {
-									$news = News::find(Input::get('news_id'));
+				  				if(Input::has('news_id'.$x)) {
+									$news = News::find(Input::get('news_id'.$x));
 								}else {
-				  					$news = News::create();									
+				  					$news = new News;									
 								}
 						  		foreach($fields as $field) {
 						  			$order = $field->order;
@@ -148,12 +149,14 @@ class FormController extends BaseController {
 						  				}
 							  		}
 						  		}
+						  		
+			  					// Uncomment for testing
 						  		echo 'News:<br/>';
-			  					// $array = $news->getAttributes();
-			  					// // Uncomment for testing
-				  				// foreach($array as $attribute) {
-				  				// 	echo $attribute . '<br/>';
-				  				// }
+			  					$array = $news->getAttributes();
+				  				foreach($array as $attribute) {
+				  					echo $attribute . '<br/>';
+				  				}
+				  				
 				  				$news->madeby()->associate($module);
 				  				$news->save();
 				  				if($content = Draftcontent::where('draftpage_id', '=', $draftpage->id)->where('draftsection_id', '=', $section->id)->first())
@@ -176,10 +179,87 @@ class FormController extends BaseController {
 					}
 					$x++;
 				}
-				return Redirect::to('/CMS/pagemodule/draft/'.$draftpage->id.'/content')->with('draftpageid', $draftpage->id);
+				// Comment next line for testing
+				// return Redirect::to('/CMS/pagemodule/draft/'.$draftpage->id.'/content')->with('draftpageid', $draftpage->id);
+				// 
 			break;
 			case 'menu':
+				$draftpage = Draftpage::find($draft_id);
+				$data = Input::all();
+			if(Input::has('newmenu')) {
+				$menu = new Draftmenu();
+				$menu->name = Input::get('newmenuname');
+				$menuposition = Draftmenuposition::find(Input::get('menuposition'));
+				$menu->draftmenuposition()->associate($menuposition);
+				$menu->save();
+				$menuid = $menu->id;
+				$draftmenu = Draftmenu::find($menuid);
+				$firstitem = Input::get('newmenu');
+				$firstitem = json_decode($firstitem);
 
+				$x = 1;
+				if(is_array($firstitem)) {
+					foreach($firstitem as $menuitem) {
+						if($draftmenuitem = Draftmenuitem::find($menuitem->id)){
+							$draftmenuitem->draftmenus()->updateExistingPivot($draftmenu->id, ['order'=>$x]);
+						}
+						else {
+							$newmenuitem = new Draftmenuitem;
+							$newmenuitem->title = $draftpage->name;
+							$newmenuitem->alias = (Input::has('changename') ? Input::get('changename') : $draftpage->name);
+							$newmenuitem->enabled = true;
+							$newmenuitem->draftpage()->associate($draftpage);
+							$newmenuitem->save();
+							$newmenuitem->draftmenus()->attach($draftmenu->id);
+							$newmenuitem->draftmenus()->updateExistingPivot($draftmenu->id, ['order'=>$x]);
+						}	
+					}
+				}
+				else {
+					$firstitem = (INT) $firstitem;
+					if($draftmenuitem = Draftmenuitem::find($firstitem)){
+						$draftmenuitem->draftmenus()->updateExistingPivot($draftmenu->id, ['order'=>$x]);
+					}
+					else {
+						$newmenuitem = new Draftmenuitem;
+						$newmenuitem->title = $draftpage->name;
+						$newmenuitem->alias = (Input::has('changename') ? Input::get('changename') : $draftpage->name);
+						$newmenuitem->enabled = true;
+						$newmenuitem->draftpage()->associate($draftpage);
+						$newmenuitem->save();
+						$newmenuitem->draftmenus()->attach($draftmenu->id);
+						$newmenuitem->draftmenus()->updateExistingPivot($draftmenu->id, ['order'=>$x]);
+					}	
+				}
+			}
+			else {
+				$menuid = Input::get('menu_id');
+				$draftmenu = Draftmenu::find($menuid);
+				$oldorder = Input::get('oldorder'.$menuid);
+				$neworder = Input::get('neworder'.$menuid);
+				if($neworder != $oldorder) {
+					$oldorder = explode(',', $oldorder);
+					$neworder = json_decode($neworder);
+					$x = 1;
+					foreach($neworder as $menuitem) {
+						if($draftmenuitem = Draftmenuitem::find($menuitem->id)){
+							$draftmenuitem->draftmenus()->updateExistingPivot($draftmenu->id, ['order'=>$x]);
+						}
+						else {
+							$newmenuitem = new Draftmenuitem;
+							$newmenuitem->title = $draftpage->name;
+							$newmenuitem->alias = (Input::has('changename') ? Input::get('changename') : $draftpage->name);
+							$newmenuitem->enabled = true;
+							$newmenuitem->draftpage()->associate($draftpage);
+							$newmenuitem->save();
+							$newmenuitem->draftmenus()->attach($draftmenu->id);
+							$newmenuitem->draftmenus()->updateExistingPivot($draftmenu->id, ['order'=>$x]);
+						}
+						$x++;
+					}		
+				}
+			}
+			return Redirect::to('/CMS/pagemodule/draft/'.$draftpage->id.'/menu')->with('draftpageid', $draftpage->id);
 			break;
 			case 'summary':
 
