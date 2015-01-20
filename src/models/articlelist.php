@@ -3,8 +3,8 @@ namespace Acdoorn\Pagemodule;
 
 use \Illuminate\Database\Eloquent\Model as Eloquent;
 
-class Article extends Eloquent {
-    protected $table = 'article';
+class Articlelist extends Eloquent {
+    protected $table = 'articlelist';
 
     public function madeby() {
     	return $this->belongsTo('Acdoorn\Pagemodule\Draftmodule', 'madebymodule_id');
@@ -20,13 +20,5 @@ class Article extends Eloquent {
 
     public function draftcontent() {
         return $this->belongsToMany('Acdoorn\Pagemodule\Draftcontent', 'content_draft', 'contentid');
-    }
-
-    public function delete(){
-        if($this->attributes['image']){
-            $file = $this->attributes['image'];
-                unlink('public'.$file);
-        }
-        parent::delete();
     }
 }

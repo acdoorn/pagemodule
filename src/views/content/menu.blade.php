@@ -1,7 +1,4 @@
 @section('content')
-	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
-	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
 
 	<h1>Menu</h1>
 	<div class="col-md-6" role="main">
@@ -12,32 +9,19 @@
 					<option disabled selected>--Choose menu--</option>
 				@foreach($menus as $menu)
 					<?php 
+		    		$parentarray = array();
+		    		foreach($menu->draftmenuitems as $menuitem) {
+		    			if(isset($menuitem->pivot->parent)){
+		    				$parentarray[$menuitem->pivot->parent] = (isset($parentarray[$menuitem->pivot->parent]) ? $parentarray[$menuitem->pivot->parent]+1 : 1);
+		    			}
+		    		}
 					$order = '';
-						$value = '<div class="dd" style="max-width:100%;width:100%;;"><ol class="dd-list">
+					$value = '<div class="dd" style="max-width:100%;width:100%;;"><ol class="dd-list">
 							  <li class="btn btn-default selectable dd-item" data-id="99999" value="new">
 							  	<div class="dd-handle btn" id="editable">'.$draft->name.'</div>
 			                  </li><br/>';
-                    ?>
-					@for($x = 1; $x <= $menu->draftmenuitems->count(); $x++)
-						@foreach($menu->draftmenuitems as $menuitem) 
-							@if($x == $menuitem->pivot->order)
-								<?php 
-								if($x != $menu->draftmenuitems->count())
-									$order .= $menuitem->id . ',';
-								else {
-									$order .= $menuitem->id;
-								}
-								$value .= '<li class="selectable dd-item" data-id="'.$menuitem->id.'">
-									<div class="btn btn-default form-control dd-handle">'.(!is_null($menuitem->alias) ? $menuitem->alias : $menuitem->title) .'</div>
-									</li>';?>
-							@endif
-						@endforeach
-					@endfor
-					<?php 
-						if($order == '') {
-							$value .= '<p>This menu is currently empty; to add the current page to this menu drag the button for this page here.</p>';
-						}
-						$value .= '</ol></div>';
+					$value = loopMenuitems($menu->draftmenuitems, $value, $parentarray, null);
+					$value .= '</ol></div>';
 					?>
 					<option value='<input type="hidden" value="{{$menu->id}}" name="menu_id"/>
 						<input type="hidden" value="{{$order}}" id="oldorder" name="oldorder{{$menu->id}}"/>
@@ -47,7 +31,6 @@
 							<input type="text" class="form-control" placeholder="{{$draft->name}}" name="changename" id="changename" aria-describedby="sizing-addon"/>
 						</div>
 							{{$value.Form::submit("Save", ["class"=>"form-control btn-success"])}}'>{{$menu->name}}</option>
-
 				@endforeach
 				<?php 
 				$menupositionhtml = array();
@@ -70,7 +53,7 @@
 						<div class="dd" style="max-width:100%;width:100%;;"><ol class="dd-list">
 							  <li class="btn btn-default selectable dd-item" data-id="99999" value="new">
 							  	<div class="dd-handle btn" id="editable">'.$draft->name.'</div>
-			                  </li><br/><p>This menu is currently empty; to add the current page to this menu drag the button for this page here.</p></ol></div>';
+			                  </li></ol></div>';
 				?>
 				<option value='{{$newmenuvalue.Form::submit("Create and Save", ["class"=>"form-control btn-success"])}}'>New Menu</option>
 			</select>
@@ -79,11 +62,85 @@
 			{{Form::close()}}
 	    </div>
 	</div>
+	{{ HTML::script('packages/acdoorn/pagemodule/js/jquery-1.10.2.js') }}
+    {{ HTML::script('packages/acdoorn/pagemodule/js/jquery-ui.js') }}
+	{{ HTML::style('packages/acdoorn/pagemodule/css/jquery-ui.css') }}
 	{{ HTML::script('packages/acdoorn/pagemodule/js/menu.js') }}
 	{{ HTML::script('packages/acdoorn/pagemodule/js/jquery-sortable.js') }}
 <div class="col-md-6">
     <div class="bs-docs-section">
         @yield('menuexample')
+    	<?php 
+
+function loopMenuitems($menuitems, $value, $parentarray, $parentid) {
+	foreach ($menuitems as $menuitem) {
+		if(!isset($parentid)) {
+			if ($menuitem->pivot->parent == null) {
+				$value .= '<li class="selectable dd-item" data-id="'.$menuitem->id.'">
+		    					<div class="btn btn-default form-control dd-handle">'.(!is_null($menuitem->alias) ? $menuitem->alias : $menuitem->title) .'</div>';
+				if(isset($parentarray[$menuitem->id])) {
+					$value .= '<ol class="dd-list">';
+					//for value in parentarray loopmenuitems $menuitems, $value, $parentarray, $parentid
+					$value = loopMenuitems($menuitems, $value, $parentarray, $menuitem->id);
+					$value .= '</ol>';
+				}
+				else {
+
+				}
+				$value .= '</li>';
+			}
+		}
+		else {
+			if ($menuitem->pivot->parent == $parentid) {
+				$value .= '<li class="selectable dd-item" data-id="'.$menuitem->id.'">
+		    					<div class="btn btn-default form-control dd-handle">'.(!is_null($menuitem->alias) ? $menuitem->alias : $menuitem->title) .'</div>';
+				if(isset($parentarray[$menuitem->id])) {
+					$value .= '<ol class="dd-list">';
+					//for value in parentarray loopmenuitems $menuitems, $value, $parentarray, $parentid
+					$value = loopMenuitems($menuitems, $value, $parentarray, $menuitem->id);
+					$value .= '</ol>';
+				}
+				else {
+
+				}
+				$value .= '</li>';
+			}
+
+		}
+	}
+	return $value;
+}	?>
     </div>
 </div>
 @stop
+<?php
+// SINGLE LEVEL MENU
+/* 
+					$order = '';
+						$value = '<div class="dd" style="max-width:100%;width:100%;;"><ol class="dd-list">
+							  <li class="btn btn-default selectable dd-item" data-id="99999" value="new">
+							  	<div class="dd-handle btn" id="editable">'.$draft->name.'</div>
+			                  </li><br/>';
+					for($x = 1; $x <= $menu->draftmenuitems->count(); $x++) {
+						foreach($menu->draftmenuitems as $menuitem) {
+							if($x == $menuitem->pivot->order) {
+								if($x != $menu->draftmenuitems->count()) {
+									$order .= $menuitem->id . ',';
+								}
+								else {
+									$order .= $menuitem->id;
+								}
+								$value .= '<li class="selectable dd-item" data-id="'.$menuitem->id.'">
+									<div class="btn btn-default form-control dd-handle">'.(!is_null($menuitem->alias) ? $menuitem->alias : $menuitem->title) .'</div>
+									</li>';
+							}
+						}
+					}
+						if($order == '') {
+							$value .= '<p>This menu is currently empty; to add the current page to this menu drag the button for this page here.</p>';
+						}
+						$value .= '</ol></div>';
+					*/
+
+			// var_dump($parentarray);
+						?>

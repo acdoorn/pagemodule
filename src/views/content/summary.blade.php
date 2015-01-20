@@ -2,7 +2,7 @@
 <h1>Summary</h1>
 <div class="col-lg-9">
     <div class="bs-docs-section">
-        @yield('general')
+        @yield('example')
     </div>
 </div>
 <div class="col-lg-9">

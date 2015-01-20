@@ -17,4 +17,8 @@ class Draftmodule extends Eloquent {
     public function articles() {
     	return $this->hasMany('Acdoorn\Pagemodule\Article');
     }
+
+    public function draftcontenttemplates() {
+        return $this->hasMany('Acdoorn\Pagemodule\Draftcontenttemplate');
+    }
 }
