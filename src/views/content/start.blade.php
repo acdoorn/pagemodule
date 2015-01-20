@@ -18,7 +18,7 @@
 			{{ Form::select('draft', $draftarray, 0, ['class'=>'form-control']) }}
 			{{ Form::submit("Select existing draft", ['name'=>'existingdraft','class'=>'form-control btn-primary']) }}<br/><br/>
 			{{ Form::select('page', $pagearray, 0, ['class'=>'form-control']) }}
-			{{ Form::submit("Select existing page", ['name'=>'existingpage','class'=>'form-control btn-warning']) }}
+			{{ Form::submit("Select existing page", ['name'=>'existingpage','class'=>'form-control btn-warning','disabled']) }}
 		{{ Form::close() }}
     </div>
 </div>

@@ -7,7 +7,7 @@ class Draftmenu extends Eloquent {
     protected $table = 'menu_draft';
 
     public function draftmenuitems() {
-    	return $this->belongsToMany('Acdoorn\Pagemodule\Draftmenuitem', 'menu_has_menuitem_draft')->withPivot('order');
+    	return $this->belongsToMany('Acdoorn\Pagemodule\Draftmenuitem', 'menu_has_menuitem_draft')->withPivot('order', 'parent');
     }
 
     public function draftmenuposition() {

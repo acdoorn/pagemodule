@@ -26,6 +26,10 @@ class Draftcontent extends Eloquent {
         return $this->belongsTo('Acdoorn\Pagemodule\Article', 'contentid');
     }
 
+    public function articlelist() {
+        return $this->belongsTo('Acdoorn\Pagemodule\Articlelist', 'contentid');
+    }
+
     public function layout() {
         return $this->belongsTo('Acdoorn\Pagemodule\Draftcontenttemplate', 'draftcontenttemplate_id');
     }

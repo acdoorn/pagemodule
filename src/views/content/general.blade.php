@@ -4,22 +4,8 @@
     <div class="bs-docs-section">
 		@if(isset($page))
 		    {{ Form::model($page) }}
-	    	<?php if(isset($page->url->url)){} 
-	    	 if(isset($page->template->code)){} 
-	    	 if(isset($page->url->seoinfo->browsertitle)){} 
-	    	 if(isset($page->url->seoinfo->keywords)){} 
-	    	 if(isset($page->url->seoinfo->description)){} 
-	    	 if(isset($page->url->seoinfo->google)){} 
-	    	 	?>
 		@elseif(isset($draft))
 		    {{ Form::model($draft) }}
-	    	<?php if(isset($draft->drafturl->url)){} 
-	    	 if(isset($draft->drafttemplate->code)){} 
-	    	 if(isset($draft->drafturl->draftseoinfo->browsertitle)){} 
-	    	 if(isset($draft->drafturl->draftseoinfo->keywords)){} 
-	    	 if(isset($draft->drafturl->draftseoinfo->description)){} 
-	    	 if(isset($draft->drafturl->draftseoinfo->google)){} 
-	    	 	?>
 		@else
 		<!-- error -->
 		@endif

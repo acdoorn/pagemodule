@@ -19,21 +19,22 @@
 		@else
 			{{ Redirect::to('/')}}
 		@endif
-		<script type="text/javascript">
-			$(function() {
-				$( "#sectiontabs" ).tabs();
-			});
-		</script>
 		  <div class="contentselect">
 		  	<h3>Insert new module</h3>
 		  	<select class="form-control" name="content[]" id="choose" style="width:100%;" size="5">
 		  		@foreach($modules as $module)
-			  		<?php $fields = $module->draftfields;
+			  		<?php $fields = $module->draftfields; // Fill select with options, value=input fields
 			  		$value= '';
 		        	$contenttemplates = array();
 			        foreach($module->draftcontenttemplates as $contenttemplate) {
 			            $contenttemplates[$contenttemplate->id] = $contenttemplate->name;
 			        }
+			        reset($contenttemplates);
+			        $contentkey = key($contenttemplates);
+
+					if($module->value == 'articlelist') {
+						$value.= '<div class="articles"><h4 class="form-control">Articlelist</h4></div>'.Form::hidden('articlelist', true, ['class'=>'articlelist']); 
+					}
 			  		?>
 			  		@foreach($fields as $field) 
 				  		<?php $fieldtype = $field->draftfieldtype;?>
@@ -59,7 +60,7 @@
 			  			<?php $value .= Form::hidden('sections[]', $module->id, ['class'=>'sections']).
 			  			'<div class="input-group">
 							    <span class="input-group-addon">Layout</span>'
-			  							.Form::select('contenttemplates[]', $contenttemplates, null, ['class'=>'form-control']);?>
+			  							.Form::select('contenttemplates[]', $contenttemplates, $contentkey, ['class'=>'form-control contenttemplates']);?>
 			  						</div>
 			  		<option value="{{{$value}}}">{{$module->name}}</option>
 		  		@endforeach
@@ -84,7 +85,7 @@
 				?>
 				@foreach ($template->draftsections as $section)
 					<div id="sectiontabs-{{$x}}"><div class="update" id="update{{$x}}">
-						<?php 
+						<?php // If the section of this page already has content fill it with the desired content
 							foreach($item->content as $content) {
 								if($section->id == $content->draftsection_id) {
 									if($content->article != null){
@@ -105,7 +106,10 @@
 											</div><br/>
 												@if($articlearray['image'])
 													<span class="glyphicon glyphicon-ok"></span>Example of current image(displayed in 100 pixels):<img class="thumbnail" src="{{$articlearray['image']}}" width="100" height="100"/>
-													<br/>
+													<br/><div class="input-group">
+											    <span class="input-group-addon">Include this image: </span>
+													{{Form::checkbox('includeImage', true, true, array('class'=>'form-control'))}} 
+											</div>
 													{{Form::hidden('image'.$x, $articlearray['image'])}}
 												@endif
 												<div class="input-group">
@@ -137,6 +141,18 @@
 										{{Form::hidden('section'.$x, $content->draftmodule->id)}}<?php
 										}
 									}
+									if($content->articlelist != null) {
+										echo '<div class="articles"><h4 class="form-control">Articlelist</h4></div>';
+										if($content->news->madeby == $content->draftmodule){
+								        	$contenttemplates = array();
+									        foreach($content->draftmodule->draftcontenttemplates as $contenttemplate) {
+									            $contenttemplates[$contenttemplate->id] = $contenttemplate->name;
+									        }
+											$newsarray = $content->news->toArray();?>
+										{{Form::hidden('articlelist'.$x, true)}}
+										{{Form::hidden('section'.$x, $content->draftmodule->id)}}<?php
+										}
+									}
 
 							echo '<div class="input-group">
 								    <span class="input-group-addon">Layout</span>'.
@@ -154,17 +170,7 @@
 			</div>
 			</div>
 		 </div>
-	<script>
-	$('#choose').change(function(event) {
-	var alltabs = $(".update");
-	for ( var x = 0; x < alltabs.length; x++ )
-	{
-		if($(alltabs[x]).is(":visible")) {
-			$(alltabs[x]).html($('#choose').val());
-		}
-	}
-}); </script>
   {{ HTML::script('packages/acdoorn/pagemodule/js/content.js') }}
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+	{{ HTML::style('packages/acdoorn/pagemodule/css/jquery-ui.css') }}
 @stop
 

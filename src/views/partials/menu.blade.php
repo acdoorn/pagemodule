@@ -5,7 +5,7 @@
 	  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse">
 	    <span class="sr-only">Toggle navigation</span>
 	  </button>
-	  <a class="navbar-brand" href="#">Pagemodule</a>
+	  <a class="navbar-brand" href="/CMS/pagemodule/">Pagemodule</a>
 	</div>
 	@if(isset($draft) || isset($page))
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
