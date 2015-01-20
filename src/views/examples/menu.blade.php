@@ -11,12 +11,12 @@ foreach($menuitems as $menuitem) {
 	}
 }
 
-$parentarray = array();
-foreach($menu->draftmenuitems as $menuitem) {
-	if(isset($menuitem->pivot->parent)){
-		$parentarray[$menuitem->pivot->parent] = (isset($parentarray[$menuitem->pivot->parent]) ? $parentarray[$menuitem->pivot->parent]+1 : 1);
-	}
-}
+// $parentarray = array();
+// foreach($menu->draftmenuitems as $menuitem) {
+// 	if(isset($menuitem->pivot->parent)){
+// 		$parentarray[$menuitem->pivot->parent] = (isset($parentarray[$menuitem->pivot->parent]) ? $parentarray[$menuitem->pivot->parent]+1 : 1);
+// 	}
+// }
 ?>
 	<h2>Added in menus:</h2>
 	@foreach($menus as $menu)
