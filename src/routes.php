@@ -29,6 +29,7 @@ Route::group(array('prefix' => '/CMS/pagemodule/page/{pageid}'), function() {
 	Route::get('/summary', 'Acdoorn\Pagemodule\HomeController@showSummary');
 	Route::post('/{step}', 'Acdoorn\Pagemodule\FormController@updatePage');
 });
+
 Route::group(array('prefix' => '/CMS/pagemodule/draft/{draftpageid}'), function() {
 	Route::get('/general', 'Acdoorn\Pagemodule\HomeController@showGeneral');
 	Route::get('/content', 'Acdoorn\Pagemodule\HomeController@showContent');
