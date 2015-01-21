@@ -149,7 +149,7 @@
 								        	$contenttemplates = array();
 									        foreach($content->draftmodule->draftcontenttemplates as $contenttemplate) {
 									            $contenttemplates[$contenttemplate->id] = $contenttemplate->name;
-									        }
+									        }?>
 										{{Form::hidden('articlelist'.$x, true)}}
 										{{Form::hidden('section'.$x, $content->draftmodule->id)}}<?php
 										}
