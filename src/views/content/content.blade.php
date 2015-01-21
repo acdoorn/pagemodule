@@ -142,13 +142,14 @@
 										}
 									}
 									if($content->articlelist != null) {
-										echo '<div class="articles"><h4 class="form-control">Articlelist</h4></div>';
-										if($content->news->madeby == $content->draftmodule){
+										if($content->articlelist->madeby == $content->draftmodule){
+											echo '<div class="articles">
+											<h4 class="form-control">Articlelist</h4>
+											</div>';
 								        	$contenttemplates = array();
 									        foreach($content->draftmodule->draftcontenttemplates as $contenttemplate) {
 									            $contenttemplates[$contenttemplate->id] = $contenttemplate->name;
 									        }
-											$newsarray = $content->news->toArray();?>
 										{{Form::hidden('articlelist'.$x, true)}}
 										{{Form::hidden('section'.$x, $content->draftmodule->id)}}<?php
 										}
