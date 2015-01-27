@@ -10,22 +10,24 @@ foreach($menuitems as $menuitem) {
 		}
 	}
 }
+$value = '';
 
-// $parentarray = array();
-// foreach($menu->draftmenuitems as $menuitem) {
-// 	if(isset($menuitem->pivot->parent)){
-// 		$parentarray[$menuitem->pivot->parent] = (isset($parentarray[$menuitem->pivot->parent]) ? $parentarray[$menuitem->pivot->parent]+1 : 1);
-// 	}
-// }
+$parentarray = array();
+foreach($menu->draftmenuitems as $menuitem) {
+	if(isset($menuitem->pivot->parent)){
+		$parentarray[$menuitem->pivot->parent] = (isset($parentarray[$menuitem->pivot->parent]) ? $parentarray[$menuitem->pivot->parent]+1 : 1);
+	}
+}
 ?>
 	<h2>Added in menus:</h2>
 	@foreach($menus as $menu)
 		<div id="link" class="btn btn-primary form-control" style="margin-bottom:5px;" name="menudiv">Menu: {{$menu->name}}
 			<ol id="submenu" style="display:none;" class="input-group form-control">
+				{{loopExampleMenuitems($menu->draftmenuitems, $value, $parentarray, null)}}
 			</ol>
 		</div>
+
 	@endforeach
-	{{ HTML::script('packages/acdoorn/pagemodule/js/menu.js') }}
 <?php } 
 
 				// loopExampleMenuitems($menu->draftmenuitems, $parentarray, null)
@@ -43,16 +45,16 @@ foreach($menuitems as $menuitem) {
 */
 
 
-function loopExampleMenuitems($menuitems, $parentarray, $parentid) {
-	$value = '';
+function loopExampleMenuitems($menuitems, $value, $parentarray, $parentid) {
 	foreach ($menuitems as $menuitem) {
 		if(!isset($parentid)) {
 			if ($menuitem->pivot->parent == null) {
-				$value .= '<li><div class="btn btn-default form-control">'.(!is_null($menuitem->alias) ? $menuitem->alias : $menuitem->title) .'</div>';
+				$value .= '<li class="dd-item">
+		    					<div class="btn btn-default form-control">'.(!is_null($menuitem->alias) ? $menuitem->alias : $menuitem->title) .'</div>';
 				if(isset($parentarray[$menuitem->id])) {
 					$value .= '<ol>';
 					//for value in parentarray loopmenuitems $menuitems, $value, $parentarray, $parentid
-					$value = loopMenuitems($menuitems, $value, $parentarray, $menuitem->id);
+					$value = loopExampleMenuitems($menuitems, $value, $parentarray, $menuitem->id);
 					$value .= '</ol>';
 				}
 				else {
@@ -63,11 +65,12 @@ function loopExampleMenuitems($menuitems, $parentarray, $parentid) {
 		}
 		else {
 			if ($menuitem->pivot->parent == $parentid) {
-				$value .= '<li><div class="btn btn-default form-control">'.(!is_null($menuitem->alias) ? $menuitem->alias : $menuitem->title) .'</div>';
+				$value .= '<li class="dd-item">
+		    					<div class="btn btn-default form-control">'.(!is_null($menuitem->alias) ? $menuitem->alias : $menuitem->title) .'</div>';
 				if(isset($parentarray[$menuitem->id])) {
 					$value .= '<ol>';
 					//for value in parentarray loopmenuitems $menuitems, $value, $parentarray, $parentid
-					$value = loopMenuitems($menuitems, $value, $parentarray, $menuitem->id);
+					$value = loopExampleMenuitems($menuitems, $value, $parentarray, $menuitem->id);
 					$value .= '</ol>';
 				}
 				else {
@@ -81,4 +84,5 @@ function loopExampleMenuitems($menuitems, $parentarray, $parentid) {
 	return $value;
 }?>
 
+	{{ HTML::script('packages/acdoorn/pagemodule/js/menu.js') }}
 @stop
