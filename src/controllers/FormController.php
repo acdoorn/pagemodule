@@ -268,6 +268,11 @@ class FormController extends BaseController {
 							}
 							$module = null;
 						break;
+						// Insert a case below with the module value from the database
+						// Examples above
+						/* EDITSPOT 4 */
+
+						/* END OF EDITSPOT 4 */
 					} // Check what module it is(switch)
 				} // Check if module exists
 			} // Check if input != 0
